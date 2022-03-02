@@ -7,7 +7,7 @@
 #include "../utility/tic_toc.h"
 #include "../parameters.h"
 
-//¶Ôimu-camera Ê±¼ä´Á²»ÍêÈ«Í¬²½ºÍ Rolling shutter Ïà»úµÄÖ§³Ö
+//å¯¹imu-camera æ—¶é—´æˆ³ä¸å®Œå…¨åŒæ­¥å’Œ Rolling shutter ç›¸æœºçš„æ”¯æŒ
 class ProjectionTdFactor : public ceres::SizedCostFunction<2, 7, 7, 7, 1, 1>
 {
   public:
@@ -17,11 +17,11 @@ class ProjectionTdFactor : public ceres::SizedCostFunction<2, 7, 7, 7, 1, 1>
     virtual bool Evaluate(double const *const *parameters, double *residuals, double **jacobians) const;
     void check(double **parameters);
 
-    Eigen::Vector3d pts_i, pts_j;//½ÇµãÔÚ¹éÒ»»¯Æ½ÃæµÄ×ø±ê
-    Eigen::Vector3d velocity_i, velocity_j;//½ÇµãÔÚ¹éÒ»»¯Æ½ÃæµÄËÙ¶È
-    double td_i, td_j;//´¦ÀíIMUÊı¾İÊ±ÓÃµ½µÄÊ±¼äÍ¬²½Îó²î
+    Eigen::Vector3d pts_i, pts_j;//è§’ç‚¹åœ¨å½’ä¸€åŒ–å¹³é¢çš„åæ ‡
+    Eigen::Vector3d velocity_i, velocity_j;//è§’ç‚¹åœ¨å½’ä¸€åŒ–å¹³é¢çš„é€Ÿåº¦
+    double td_i, td_j;//å¤„ç†IMUæ•°æ®æ—¶ç”¨åˆ°çš„æ—¶é—´åŒæ­¥è¯¯å·®
     Eigen::Matrix<double, 2, 3> tangent_base;
-    double row_i, row_j;//½ÇµãÍ¼Ïñ×ø±êµÄ×İ×ø±ê
+    double row_i, row_j;//è§’ç‚¹å›¾åƒåæ ‡çš„çºµåæ ‡
     static Eigen::Matrix2d sqrt_info;
     static double sum_t;
 };

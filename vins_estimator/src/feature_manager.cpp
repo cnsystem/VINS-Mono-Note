@@ -20,13 +20,13 @@ void FeatureManager::setRic(Matrix3d _ric[])
     }
 }
 
-//Çå³şÌØÕ÷¹ÜÀíÆ÷ÖĞµÄÌØÕ÷
+//æ¸…æ¥šç‰¹å¾ç®¡ç†å™¨ä¸­çš„ç‰¹å¾
 void FeatureManager::clearState()
 {
     feature.clear();
 }
 
-//´°¿ÚÖĞ±»¸ú×ÙµÄÌØÕ÷ÊıÁ¿
+//çª—å£ä¸­è¢«è·Ÿè¸ªçš„ç‰¹å¾æ•°é‡
 int FeatureManager::getFeatureCount()
 {
     int cnt = 0;
@@ -44,11 +44,11 @@ int FeatureManager::getFeatureCount()
 }
 
 /**
- * @brief   °ÑÌØÕ÷µã·ÅÈëfeatureµÄlistÈİÆ÷ÖĞ£¬¼ÆËãÃ¿Ò»¸öµã¸ú×Ù´ÎÊıºÍËüÔÚ´ÎĞÂÖ¡ºÍ´Î´ÎĞÂÖ¡¼äµÄÊÓ²î£¬·µ»ØÊÇ·ñÊÇ¹Ø¼üÖ¡
- * @param[in]   frame_count ´°¿ÚÄÚÖ¡µÄ¸öÊı
- * @param[in]   image Ä³Ö¡ËùÓĞÌØÕ÷µãµÄ[camera_id,[x,y,z,u,v,vx,vy]]s¹¹³ÉµÄmap,Ë÷ÒıÎªfeature_id
- * @param[in]   td IMUºÍcamÍ¬²½Ê±¼ä²î
- * @return  bool true£º´ÎĞÂÖ¡ÊÇ¹Ø¼üÖ¡;false£º·Ç¹Ø¼üÖ¡
+ * @brief   æŠŠç‰¹å¾ç‚¹æ”¾å…¥featureçš„listå®¹å™¨ä¸­ï¼Œè®¡ç®—æ¯ä¸€ä¸ªç‚¹è·Ÿè¸ªæ¬¡æ•°å’Œå®ƒåœ¨æ¬¡æ–°å¸§å’Œæ¬¡æ¬¡æ–°å¸§é—´çš„è§†å·®ï¼Œè¿”å›æ˜¯å¦æ˜¯å…³é”®å¸§
+ * @param[in]   frame_count çª—å£å†…å¸§çš„ä¸ªæ•°
+ * @param[in]   image æŸå¸§æ‰€æœ‰ç‰¹å¾ç‚¹çš„[camera_id,[x,y,z,u,v,vx,vy]]sæ„æˆçš„map,ç´¢å¼•ä¸ºfeature_id
+ * @param[in]   td IMUå’ŒcamåŒæ­¥æ—¶é—´å·®
+ * @return  bool trueï¼šæ¬¡æ–°å¸§æ˜¯å…³é”®å¸§;falseï¼šéå…³é”®å¸§
 */
 bool FeatureManager::addFeatureCheckParallax(int frame_count, const map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> &image, double td)
 {
@@ -57,25 +57,25 @@ bool FeatureManager::addFeatureCheckParallax(int frame_count, const map<int, vec
     double parallax_sum = 0;
     int parallax_num = 0;
     last_track_num = 0;
-    //°Ñimage mapÖĞµÄËùÓĞÌØÕ÷µã·ÅÈëfeature listÈİÆ÷ÖĞ
+    //æŠŠimage mapä¸­çš„æ‰€æœ‰ç‰¹å¾ç‚¹æ”¾å…¥feature listå®¹å™¨ä¸­
     for (auto &id_pts : image)
     {
         FeaturePerFrame f_per_fra(id_pts.second[0].second, td);
 
-        //µü´úÆ÷Ñ°ÕÒfeature listÖĞÊÇ·ñÓĞÕâfeature_id
+        //è¿­ä»£å™¨å¯»æ‰¾feature listä¸­æ˜¯å¦æœ‰è¿™feature_id
         int feature_id = id_pts.first;
         auto it = find_if(feature.begin(), feature.end(), [feature_id](const FeaturePerId &it)
                           {
             return it.feature_id == feature_id;
                           });
 
-        //Èç¹ûÃ»ÓĞÔòĞÂ½¨Ò»¸ö£¬²¢Ìí¼ÓÕâÍ¼ÏñÖ¡
+        //å¦‚æœæ²¡æœ‰åˆ™æ–°å»ºä¸€ä¸ªï¼Œå¹¶æ·»åŠ è¿™å›¾åƒå¸§
         if (it == feature.end())
         {
             feature.push_back(FeaturePerId(feature_id, frame_count));
             feature.back().feature_per_frame.push_back(f_per_fra);
         }
-        //ÓĞµÄ»°°ÑÍ¼ÏñÖ¡Ìí¼Ó½øÈ¥
+        //æœ‰çš„è¯æŠŠå›¾åƒå¸§æ·»åŠ è¿›å»
         else if (it->feature_id == feature_id)
         {
             it->feature_per_frame.push_back(f_per_fra);
@@ -87,7 +87,7 @@ bool FeatureManager::addFeatureCheckParallax(int frame_count, const map<int, vec
     if (frame_count < 2 || last_track_num < 20)
         return true;
 
-    //¼ÆËãÃ¿¸öÌØÕ÷ÔÚ´ÎĞÂÖ¡ºÍ´Î´ÎĞÂÖ¡ÖĞµÄÊÓ²î
+    //è®¡ç®—æ¯ä¸ªç‰¹å¾åœ¨æ¬¡æ–°å¸§å’Œæ¬¡æ¬¡æ–°å¸§ä¸­çš„è§†å·®
     for (auto &it_per_id : feature)
     {
         if (it_per_id.start_frame <= frame_count - 2 &&
@@ -131,7 +131,7 @@ void FeatureManager::debugShow()
     }
 }
 
-//µÃµ½frame_count_lÓëframe_count_rÁ½Ö¡Ö®¼äµÄ¶ÔÓ¦ÌØÕ÷µã
+//å¾—åˆ°frame_count_lä¸frame_count_rä¸¤å¸§ä¹‹é—´çš„å¯¹åº”ç‰¹å¾ç‚¹
 vector<pair<Vector3d, Vector3d>> FeatureManager::getCorresponding(int frame_count_l, int frame_count_r)
 {
     vector<pair<Vector3d, Vector3d>> corres;
@@ -153,7 +153,7 @@ vector<pair<Vector3d, Vector3d>> FeatureManager::getCorresponding(int frame_coun
     return corres;
 }
 
-//ÉèÖÃÌØÕ÷µãµÄÄæÉî¶È¹À¼ÆÖµ
+//è®¾ç½®ç‰¹å¾ç‚¹çš„é€†æ·±åº¦ä¼°è®¡å€¼
 void FeatureManager::setDepth(const VectorXd &x)
 {
     int feature_index = -1;
@@ -167,14 +167,14 @@ void FeatureManager::setDepth(const VectorXd &x)
         //ROS_INFO("feature id %d , start_frame %d, depth %f ", it_per_id->feature_id, it_per_id-> start_frame, it_per_id->estimated_depth);
         if (it_per_id.estimated_depth < 0)
         {
-            it_per_id.solve_flag = 2;//Ê§°Ü¹À¼Æ
+            it_per_id.solve_flag = 2;//å¤±è´¥ä¼°è®¡
         }
         else
-            it_per_id.solve_flag = 1;//³É¹¦¹À¼Æ
+            it_per_id.solve_flag = 1;//æˆåŠŸä¼°è®¡
     }
 }
 
-//ÌŞ³ıfeatureÖĞ¹À¼ÆÊ§°ÜµÄµã£¨solve_flag == 2£©
+//å‰”é™¤featureä¸­ä¼°è®¡å¤±è´¥çš„ç‚¹ï¼ˆsolve_flag == 2ï¼‰
 void FeatureManager::removeFailures()
 {
     for (auto it = feature.begin(), it_next = feature.begin();
@@ -217,7 +217,7 @@ VectorXd FeatureManager::getDepthVector()
     return dep_vec;
 }
 
-//¶ÔÌØÕ÷µã½øĞĞÈı½Ç»¯ÇóÉî¶È£¨SVD·Ö½â£©
+//å¯¹ç‰¹å¾ç‚¹è¿›è¡Œä¸‰è§’åŒ–æ±‚æ·±åº¦ï¼ˆSVDåˆ†è§£ï¼‰
 void FeatureManager::triangulate(Vector3d Ps[], Vector3d tic[], Matrix3d ric[])
 {
     for (auto &it_per_id : feature)
@@ -234,7 +234,7 @@ void FeatureManager::triangulate(Vector3d Ps[], Vector3d tic[], Matrix3d ric[])
         Eigen::MatrixXd svd_A(2 * it_per_id.feature_per_frame.size(), 4);
         int svd_idx = 0;
 
-        //R0 t0ÎªµÚiÖ¡Ïà»ú×ø±êÏµµ½ÊÀ½ç×ø±êÏµµÄ±ä»»¾ØÕó
+        //R0 t0ä¸ºç¬¬iå¸§ç›¸æœºåæ ‡ç³»åˆ°ä¸–ç•Œåæ ‡ç³»çš„å˜æ¢çŸ©é˜µ
         Eigen::Matrix<double, 3, 4> P0;
         Eigen::Vector3d t0 = Ps[imu_i] + Rs[imu_i] * tic[0];
         Eigen::Matrix3d R0 = Rs[imu_i] * ric[0];
@@ -244,7 +244,7 @@ void FeatureManager::triangulate(Vector3d Ps[], Vector3d tic[], Matrix3d ric[])
         for (auto &it_per_frame : it_per_id.feature_per_frame)
         {
             imu_j++;
-            //R tÎªµÚjÖ¡Ïà»ú×ø±êÏµµ½µÚiÖ¡Ïà»ú×ø±êÏµµÄ±ä»»¾ØÕó£¬PÎªiµ½jµÄ±ä»»¾ØÕó
+            //R tä¸ºç¬¬jå¸§ç›¸æœºåæ ‡ç³»åˆ°ç¬¬iå¸§ç›¸æœºåæ ‡ç³»çš„å˜æ¢çŸ©é˜µï¼ŒPä¸ºiåˆ°jçš„å˜æ¢çŸ©é˜µ
             Eigen::Vector3d t1 = Ps[imu_j] + Rs[imu_j] * tic[0];
             Eigen::Matrix3d R1 = Rs[imu_j] * ric[0];
             Eigen::Vector3d t = R0.transpose() * (t1 - t0);
@@ -263,7 +263,7 @@ void FeatureManager::triangulate(Vector3d Ps[], Vector3d tic[], Matrix3d ric[])
             if (imu_i == imu_j)
                 continue;
         }
-        //¶ÔAµÄSVD·Ö½âµÃµ½Æä×îĞ¡ÆæÒìÖµ¶ÔÓ¦µÄµ¥Î»ÆæÒìÏòÁ¿(x,y,z,w)£¬Éî¶ÈÎªz/w
+        //å¯¹Açš„SVDåˆ†è§£å¾—åˆ°å…¶æœ€å°å¥‡å¼‚å€¼å¯¹åº”çš„å•ä½å¥‡å¼‚å‘é‡(x,y,z,w)ï¼Œæ·±åº¦ä¸ºz/w
         ROS_ASSERT(svd_idx == svd_A.rows());
         Eigen::Vector4d svd_V = Eigen::JacobiSVD<Eigen::MatrixXd>(svd_A, Eigen::ComputeThinV).matrixV().rightCols<1>();
         double svd_method = svd_V[2] / svd_V[3];
@@ -281,7 +281,7 @@ void FeatureManager::triangulate(Vector3d Ps[], Vector3d tic[], Matrix3d ric[])
     }
 }
 
-//ÒÆ³ıÍâµã
+//ç§»é™¤å¤–ç‚¹
 void FeatureManager::removeOutlier()
 {
     ROS_BREAK();
@@ -298,23 +298,23 @@ void FeatureManager::removeOutlier()
     }
 }
 
-//±ßÔµ»¯×îÀÏÖ¡Ê±£¬´¦ÀíÌØÕ÷µã±£´æµÄÖ¡ºÅ£¬½«ÆğÊ¼Ö¡ÊÇ×îÀÏÖ¡µÄÌØÕ÷µãµÄÉî¶ÈÖµ½øĞĞ×ªÒÆ
-//marg_R¡¢marg_PÎª±»±ßÔµ»¯µÄÎ»×Ë£¬new_R¡¢new_PÎªÔÚÕâÏÂÒ»Ö¡µÄÎ»×Ë
+//è¾¹ç¼˜åŒ–æœ€è€å¸§æ—¶ï¼Œå¤„ç†ç‰¹å¾ç‚¹ä¿å­˜çš„å¸§å·ï¼Œå°†èµ·å§‹å¸§æ˜¯æœ€è€å¸§çš„ç‰¹å¾ç‚¹çš„æ·±åº¦å€¼è¿›è¡Œè½¬ç§»
+//marg_Rã€marg_Pä¸ºè¢«è¾¹ç¼˜åŒ–çš„ä½å§¿ï¼Œnew_Rã€new_Pä¸ºåœ¨è¿™ä¸‹ä¸€å¸§çš„ä½å§¿
 void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3d marg_P, Eigen::Matrix3d new_R, Eigen::Vector3d new_P)
 {
     for (auto it = feature.begin(), it_next = feature.begin();
          it != feature.end(); it = it_next)
     {
         it_next++;
-        //ÌØÕ÷µãÆğÊ¼Ö¡²»ÊÇ×îÀÏÖ¡Ôò½«Ö¡ºÅ¼õÒ»
+        //ç‰¹å¾ç‚¹èµ·å§‹å¸§ä¸æ˜¯æœ€è€å¸§åˆ™å°†å¸§å·å‡ä¸€
         if (it->start_frame != 0)
             it->start_frame--;
         else
         {
-            //ÌØÕ÷µãÆğÊ¼Ö¡ÊÇ×îÀÏÖ¡
+            //ç‰¹å¾ç‚¹èµ·å§‹å¸§æ˜¯æœ€è€å¸§
             Eigen::Vector3d uv_i = it->feature_per_frame[0].point;  
             it->feature_per_frame.erase(it->feature_per_frame.begin());
-            //ÌØÕ÷µãÖ»ÔÚ×îÀÏÖ¡±»¹Û²âÔòÖ±½ÓÒÆ³ı
+            //ç‰¹å¾ç‚¹åªåœ¨æœ€è€å¸§è¢«è§‚æµ‹åˆ™ç›´æ¥ç§»é™¤
             if (it->feature_per_frame.size() < 2)
             {
                 feature.erase(it);
@@ -322,9 +322,9 @@ void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3
             }
             else
             {
-                //pts_iÎªÌØÕ÷µãÔÚ×îÀÏÖ¡×ø±êÏµÏÂµÄÈıÎ¬×ø±ê
-                //w_pts_iÎªÌØÕ÷µãÔÚÊÀ½ç×ø±êÏµÏÂµÄÈıÎ¬×ø±ê
-                //½«Æä×ª»»µ½ÔÚÏÂÒ»Ö¡×ø±êÏµÏÂµÄ×ø±êpts_j
+                //pts_iä¸ºç‰¹å¾ç‚¹åœ¨æœ€è€å¸§åæ ‡ç³»ä¸‹çš„ä¸‰ç»´åæ ‡
+                //w_pts_iä¸ºç‰¹å¾ç‚¹åœ¨ä¸–ç•Œåæ ‡ç³»ä¸‹çš„ä¸‰ç»´åæ ‡
+                //å°†å…¶è½¬æ¢åˆ°åœ¨ä¸‹ä¸€å¸§åæ ‡ç³»ä¸‹çš„åæ ‡pts_j
                 Eigen::Vector3d pts_i = uv_i * it->estimated_depth;
                 Eigen::Vector3d w_pts_i = marg_R * pts_i + marg_P;
                 Eigen::Vector3d pts_j = new_R.transpose() * (w_pts_i - new_P);
@@ -345,18 +345,18 @@ void FeatureManager::removeBackShiftDepth(Eigen::Matrix3d marg_R, Eigen::Vector3
     }
 }
 
-//±ßÔµ»¯×îÀÏÖ¡Ê±£¬Ö±½Ó½«ÌØÕ÷µãËù±£´æµÄÖ¡ºÅÏòÇ°»¬¶¯
+//è¾¹ç¼˜åŒ–æœ€è€å¸§æ—¶ï¼Œç›´æ¥å°†ç‰¹å¾ç‚¹æ‰€ä¿å­˜çš„å¸§å·å‘å‰æ»‘åŠ¨
 void FeatureManager::removeBack()
 {
     for (auto it = feature.begin(), it_next = feature.begin();
          it != feature.end(); it = it_next)
     {
         it_next++;
-        //Èç¹ûÌØÕ÷µãÆğÊ¼Ö¡ºÅstart_frame²»ÎªÁãÔò¼õÒ»
+        //å¦‚æœç‰¹å¾ç‚¹èµ·å§‹å¸§å·start_frameä¸ä¸ºé›¶åˆ™å‡ä¸€
         if (it->start_frame != 0)
             it->start_frame--;
-        //Èç¹ûstart_frameÎª0ÔòÖ±½ÓÒÆ³ıfeature_per_frameµÄµÚ0Ö¡FeaturePerFrame
-        //Èç¹ûfeature_per_frameÎª¿ÕÔòÖ±½ÓÉ¾³ıÌØÕ÷µã
+        //å¦‚æœstart_frameä¸º0åˆ™ç›´æ¥ç§»é™¤feature_per_frameçš„ç¬¬0å¸§FeaturePerFrame
+        //å¦‚æœfeature_per_frameä¸ºç©ºåˆ™ç›´æ¥åˆ é™¤ç‰¹å¾ç‚¹
         else
         {
             it->feature_per_frame.erase(it->feature_per_frame.begin());
@@ -366,13 +366,13 @@ void FeatureManager::removeBack()
     }
 }
 
-//±ßÔµ»¯´ÎĞÂÖ¡Ê±£¬¶ÔÌØÕ÷µãÔÚ´ÎĞÂÖ¡µÄĞÅÏ¢½øĞĞÒÆ³ı´¦Àí
+//è¾¹ç¼˜åŒ–æ¬¡æ–°å¸§æ—¶ï¼Œå¯¹ç‰¹å¾ç‚¹åœ¨æ¬¡æ–°å¸§çš„ä¿¡æ¯è¿›è¡Œç§»é™¤å¤„ç†
 void FeatureManager::removeFront(int frame_count)
 {
     for (auto it = feature.begin(), it_next = feature.begin(); it != feature.end(); it = it_next)
     {
         it_next++;
-        //ÆğÊ¼Ö¡Îª×îĞÂÖ¡µÄ»¬¶¯³É´ÎĞÂÖ¡
+        //èµ·å§‹å¸§ä¸ºæœ€æ–°å¸§çš„æ»‘åŠ¨æˆæ¬¡æ–°å¸§
         if (it->start_frame == frame_count)
         {
             it->start_frame--;
@@ -380,11 +380,11 @@ void FeatureManager::removeFront(int frame_count)
         else
         {
             int j = WINDOW_SIZE - 1 - it->start_frame;
-            //Èç¹û´ÎĞÂÖ¡Ö®Ç°ÒÑ¾­¸ú×Ù½áÊøÔòÊ²Ã´¶¼²»×ö
+            //å¦‚æœæ¬¡æ–°å¸§ä¹‹å‰å·²ç»è·Ÿè¸ªç»“æŸåˆ™ä»€ä¹ˆéƒ½ä¸åš
             if (it->endFrame() < frame_count - 1)
                 continue;
-            //Èç¹ûÔÚ´ÎĞÂÖ¡ÈÔ±»¸ú×Ù£¬ÔòÉ¾³ıfeature_per_frameÖĞ´ÎĞÂÖ¡¶ÔÓ¦µÄFeaturePerFrame
-            //Èç¹ûfeature_per_frameÎª¿ÕÔòÖ±½ÓÉ¾³ıÌØÕ÷µã
+            //å¦‚æœåœ¨æ¬¡æ–°å¸§ä»è¢«è·Ÿè¸ªï¼Œåˆ™åˆ é™¤feature_per_frameä¸­æ¬¡æ–°å¸§å¯¹åº”çš„FeaturePerFrame
+            //å¦‚æœfeature_per_frameä¸ºç©ºåˆ™ç›´æ¥åˆ é™¤ç‰¹å¾ç‚¹
             it->feature_per_frame.erase(it->feature_per_frame.begin() + j);
             if (it->feature_per_frame.size() == 0)
                 feature.erase(it);
@@ -392,7 +392,7 @@ void FeatureManager::removeFront(int frame_count)
     }
 }
 
-//¼ÆËãÄ³¸öÌØÕ÷µãit_per_idÔÚ´ÎĞÂÖ¡ºÍ´Î´ÎĞÂÖ¡µÄÊÓ²î
+//è®¡ç®—æŸä¸ªç‰¹å¾ç‚¹it_per_idåœ¨æ¬¡æ–°å¸§å’Œæ¬¡æ¬¡æ–°å¸§çš„è§†å·®
 double FeatureManager::compensatedParallax2(const FeaturePerId &it_per_id, int frame_count)
 {
     //check the second last frame is keyframe or not

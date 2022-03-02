@@ -1,12 +1,12 @@
 #include "initial_alignment.h"
 
 /**
- * @brief   ÍÓÂİÒÇÆ«ÖÃĞ£Õı
- * @optional    ¸ù¾İÊÓ¾õSFMµÄ½á¹ûÀ´Ğ£ÕıÍÓÂİÒÇBias -> Paper V-B-1
- *              Ö÷ÒªÊÇ½«ÏàÁÚÖ¡Ö®¼äSFMÇó½â³öÀ´µÄĞı×ª¾ØÕóÓëIMUÔ¤»ı·ÖµÄĞı×ªÁ¿¶ÔÆë
- *              ×¢ÒâµÃµ½ÁËĞÂµÄBiasºó¶ÔÓ¦µÄÔ¤»ı·ÖĞèÒªrepropagate
- * @param[in]   all_image_frameËùÓĞÍ¼ÏñÖ¡¹¹³ÉµÄmap,Í¼ÏñÖ¡±£´æÁËÎ»×Ë¡¢Ô¤»ı·ÖÁ¿ºÍ¹ØÓÚ½ÇµãµÄĞÅÏ¢
- * @param[out]  Bgs ÍÓÂİÒÇÆ«ÖÃ
+ * @brief   é™€èºä»ªåç½®æ ¡æ­£
+ * @optional    æ ¹æ®è§†è§‰SFMçš„ç»“æœæ¥æ ¡æ­£é™€èºä»ªBias -> Paper V-B-1
+ *              ä¸»è¦æ˜¯å°†ç›¸é‚»å¸§ä¹‹é—´SFMæ±‚è§£å‡ºæ¥çš„æ—‹è½¬çŸ©é˜µä¸IMUé¢„ç§¯åˆ†çš„æ—‹è½¬é‡å¯¹é½
+ *              æ³¨æ„å¾—åˆ°äº†æ–°çš„Biasåå¯¹åº”çš„é¢„ç§¯åˆ†éœ€è¦repropagate
+ * @param[in]   all_image_frameæ‰€æœ‰å›¾åƒå¸§æ„æˆçš„map,å›¾åƒå¸§ä¿å­˜äº†ä½å§¿ã€é¢„ç§¯åˆ†é‡å’Œå…³äºè§’ç‚¹çš„ä¿¡æ¯
+ * @param[out]  Bgs é™€èºä»ªåç½®
  * @return      void
 */
 void solveGyroscopeBias(map<double, ImageFrame> &all_image_frame, Vector3d* Bgs)
@@ -26,7 +26,7 @@ void solveGyroscopeBias(map<double, ImageFrame> &all_image_frame, Vector3d* Bgs)
         VectorXd tmp_b(3);
         tmp_b.setZero();
 
-        //R_ij = (R^c0_bk)^-1 * (R^c0_bk+1) ×ª»»ÎªËÄÔªÊı q_ij = (q^c0_bk)^-1 * (q^c0_bk+1)
+        //R_ij = (R^c0_bk)^-1 * (R^c0_bk+1) è½¬æ¢ä¸ºå››å…ƒæ•° q_ij = (q^c0_bk)^-1 * (q^c0_bk+1)
         Eigen::Quaterniond q_ij(frame_i->second.R.transpose() * frame_j->second.R);
         //tmp_A = J_j_bw
         tmp_A = frame_j->second.pre_integration->jacobian.template block<3, 3>(O_R, O_BG);
@@ -38,7 +38,7 @@ void solveGyroscopeBias(map<double, ImageFrame> &all_image_frame, Vector3d* Bgs)
         b += tmp_A.transpose() * tmp_b;
 
     }
-    //LDLT·½·¨
+    //LDLTæ–¹æ³•
     delta_bg = A.ldlt().solve(b);
     ROS_WARN_STREAM("gyroscope bias initial calibration " << delta_bg.transpose());
 
@@ -52,7 +52,7 @@ void solveGyroscopeBias(map<double, ImageFrame> &all_image_frame, Vector3d* Bgs)
     }
 }
 
-//ÔÚ°ë¾¶ÎªGµÄ°ëÇòÕÒµ½ÇĞÃæµÄÒ»¶ÔÕı½»»ù -> Algorithm 1  
+//åœ¨åŠå¾„ä¸ºGçš„åŠçƒæ‰¾åˆ°åˆ‡é¢çš„ä¸€å¯¹æ­£äº¤åŸº -> Algorithm 1  
 MatrixXd TangentBasis(Vector3d &g0)
 {
     Vector3d b, c;
@@ -69,12 +69,12 @@ MatrixXd TangentBasis(Vector3d &g0)
 }
 
 /**
- * @brief   ÖØÁ¦Ê¸Á¿Ï¸»¯
- * @optional    ÖØÁ¦Ï¸»¯£¬ÔÚÆäÇĞÏß¿Õ¼äÉÏÓÃÁ½¸ö±äÁ¿ÖØĞÂ²ÎÊı»¯ÖØÁ¦ -> Paper V-B-3 
+ * @brief   é‡åŠ›çŸ¢é‡ç»†åŒ–
+ * @optional    é‡åŠ›ç»†åŒ–ï¼Œåœ¨å…¶åˆ‡çº¿ç©ºé—´ä¸Šç”¨ä¸¤ä¸ªå˜é‡é‡æ–°å‚æ•°åŒ–é‡åŠ› -> Paper V-B-3 
                 g^ = ||g|| * (g^-) + w1b1 + w2b2 
- * @param[in]   all_image_frame ËùÓĞÍ¼ÏñÖ¡¹¹³ÉµÄmap,Í¼ÏñÖ¡±£´æÁËÎ»×Ë£¬Ô¤»ı·ÖÁ¿ºÍ¹ØÓÚ½ÇµãµÄĞÅÏ¢
- * @param[out]  g ÖØÁ¦¼ÓËÙ¶È
- * @param[out]  x ´ıÓÅ»¯±äÁ¿£¬´°¿ÚÖĞÃ¿Ö¡µÄËÙ¶ÈV[0:n]¡¢¶ş×ÔÓÉ¶ÈÖØÁ¦²ÎÊıw[w1,w2]^T¡¢³ß¶Ès
+ * @param[in]   all_image_frame æ‰€æœ‰å›¾åƒå¸§æ„æˆçš„map,å›¾åƒå¸§ä¿å­˜äº†ä½å§¿ï¼Œé¢„ç§¯åˆ†é‡å’Œå…³äºè§’ç‚¹çš„ä¿¡æ¯
+ * @param[out]  g é‡åŠ›åŠ é€Ÿåº¦
+ * @param[out]  x å¾…ä¼˜åŒ–å˜é‡ï¼Œçª—å£ä¸­æ¯å¸§çš„é€Ÿåº¦V[0:n]ã€äºŒè‡ªç”±åº¦é‡åŠ›å‚æ•°w[w1,w2]^Tã€å°ºåº¦s
  * @return      void
 */
 void RefineGravity(map<double, ImageFrame> &all_image_frame, Vector3d &g, VectorXd &x)
@@ -94,7 +94,7 @@ void RefineGravity(map<double, ImageFrame> &all_image_frame, Vector3d &g, Vector
     map<double, ImageFrame>::iterator frame_i;
     map<double, ImageFrame>::iterator frame_j;
 
-    for(int k = 0; k < 4; k++)//µü´ú4´Î
+    for(int k = 0; k < 4; k++)//è¿­ä»£4æ¬¡
     {
         //lxly = b = [b1,b2]
         MatrixXd lxly(3, 2);
@@ -114,7 +114,7 @@ void RefineGravity(map<double, ImageFrame> &all_image_frame, Vector3d &g, Vector
             // tmp_A(6,9) = [-I*dt           0             (R^bk_c0)*dt*dt*b/2   (R^bk_c0)*((p^c0_ck+1)-(p^c0_ck))  ] 
             //              [ -I    (R^bk_c0)*(R^c0_bk+1)      (R^bk_c0)*dt*b                  0                    ]
             // tmp_b(6,1) = [ (a^bk_bk+1)+(R^bk_c0)*(R^c0_bk+1)*p^b_c-p^b_c - (R^bk_c0)*dt*dt*||g||*(g^-)/2 , (b^bk_bk+1)-(R^bk_c0)dt*||g||*(g^-)]^T
-            // tmp_A * x = tmp_b Çó½â×îĞ¡¶ş³ËÎÊÌâ
+            // tmp_A * x = tmp_b æ±‚è§£æœ€å°äºŒä¹˜é—®é¢˜
             tmp_A.block<3, 3>(0, 0) = -dt * Matrix3d::Identity();
             tmp_A.block<3, 2>(0, 6) = frame_i->second.R.transpose() * dt * dt / 2 * Matrix3d::Identity() * lxly;
             tmp_A.block<3, 1>(0, 8) = frame_i->second.R.transpose() * (frame_j->second.T - frame_i->second.T) / 100.0;     
@@ -155,19 +155,19 @@ void RefineGravity(map<double, ImageFrame> &all_image_frame, Vector3d &g, Vector
 }
 
 /**
- * @brief   ¼ÆËã³ß¶È£¬ÖØÁ¦¼ÓËÙ¶ÈºÍËÙ¶È
- * @optional    ËÙ¶È¡¢ÖØÁ¦ÏòÁ¿ºÍ³ß¶È³õÊ¼»¯Paper -> V-B-2
- *              ÏàÁÚÖ¡Ö®¼äµÄÎ»ÖÃºÍËÙ¶ÈÓëIMUÔ¤»ı·Ö³öÀ´µÄÎ»ÖÃºÍËÙ¶È¶ÔÆë£¬Çó½â×îĞ¡¶ş³Ë
- *              ÖØÁ¦Ï¸»¯ -> Paper V-B-3    
- * @param[in]   all_image_frame ËùÓĞÍ¼ÏñÖ¡¹¹³ÉµÄmap,Í¼ÏñÖ¡±£´æÁËÎ»×Ë£¬Ô¤»ı·ÖÁ¿ºÍ¹ØÓÚ½ÇµãµÄĞÅÏ¢
- * @param[out]  g ÖØÁ¦¼ÓËÙ¶È
- * @param[out]  x ´ıÓÅ»¯±äÁ¿£¬´°¿ÚÖĞÃ¿Ö¡µÄËÙ¶ÈV[0:n]¡¢ÖØÁ¦g¡¢³ß¶Ès
+ * @brief   è®¡ç®—å°ºåº¦ï¼Œé‡åŠ›åŠ é€Ÿåº¦å’Œé€Ÿåº¦
+ * @optional    é€Ÿåº¦ã€é‡åŠ›å‘é‡å’Œå°ºåº¦åˆå§‹åŒ–Paper -> V-B-2
+ *              ç›¸é‚»å¸§ä¹‹é—´çš„ä½ç½®å’Œé€Ÿåº¦ä¸IMUé¢„ç§¯åˆ†å‡ºæ¥çš„ä½ç½®å’Œé€Ÿåº¦å¯¹é½ï¼Œæ±‚è§£æœ€å°äºŒä¹˜
+ *              é‡åŠ›ç»†åŒ– -> Paper V-B-3    
+ * @param[in]   all_image_frame æ‰€æœ‰å›¾åƒå¸§æ„æˆçš„map,å›¾åƒå¸§ä¿å­˜äº†ä½å§¿ï¼Œé¢„ç§¯åˆ†é‡å’Œå…³äºè§’ç‚¹çš„ä¿¡æ¯
+ * @param[out]  g é‡åŠ›åŠ é€Ÿåº¦
+ * @param[out]  x å¾…ä¼˜åŒ–å˜é‡ï¼Œçª—å£ä¸­æ¯å¸§çš„é€Ÿåº¦V[0:n]ã€é‡åŠ›gã€å°ºåº¦s
  * @return      void
 */
 bool LinearAlignment(map<double, ImageFrame> &all_image_frame, Vector3d &g, VectorXd &x)
 {
     int all_frame_count = all_image_frame.size();
-    //ÓÅ»¯Á¿xµÄ×ÜÎ¬¶È
+    //ä¼˜åŒ–é‡xçš„æ€»ç»´åº¦
     int n_state = all_frame_count * 3 + 3 + 1;
 
     MatrixXd A{n_state, n_state};
@@ -192,7 +192,7 @@ bool LinearAlignment(map<double, ImageFrame> &all_image_frame, Vector3d &g, Vect
         // tmp_A(6,10) = H^bk_bk+1 = [-I*dt           0             (R^bk_c0)*dt*dt/2   (R^bk_c0)*((p^c0_ck+1)-(p^c0_ck))  ] 
         //                           [ -I    (R^bk_c0)*(R^c0_bk+1)      (R^bk_c0)*dt                  0                    ]
         // tmp_b(6,1 ) = z^bk_bk+1 = [ (a^bk_bk+1)+(R^bk_c0)*(R^c0_bk+1)*p^b_c-p^b_c , (b^bk_bk+1)]^T
-        // tmp_A * x = tmp_b Çó½â×îĞ¡¶ş³ËÎÊÌâ
+        // tmp_A * x = tmp_b æ±‚è§£æœ€å°äºŒä¹˜é—®é¢˜
         tmp_A.block<3, 3>(0, 0) = -dt * Matrix3d::Identity();
         tmp_A.block<3, 3>(0, 6) = frame_i->second.R.transpose() * dt * dt / 2 * Matrix3d::Identity();
         tmp_A.block<3, 1>(0, 9) = frame_i->second.R.transpose() * (frame_j->second.T - frame_i->second.T) / 100.0;     
@@ -236,7 +236,7 @@ bool LinearAlignment(map<double, ImageFrame> &all_image_frame, Vector3d &g, Vect
         return false;
     }
 
-    //ÖØÁ¦Ï¸»¯
+    //é‡åŠ›ç»†åŒ–
     RefineGravity(all_image_frame, g, x);
     
     s = (x.tail<1>())(0) / 100.0;
@@ -249,12 +249,12 @@ bool LinearAlignment(map<double, ImageFrame> &all_image_frame, Vector3d &g, Vect
         return true;
 }
 
-//ÊÓ¾õºÍIMU¶ÔÆë
+//è§†è§‰å’ŒIMUå¯¹é½
 bool VisualIMUAlignment(map<double, ImageFrame> &all_image_frame, Vector3d* Bgs, Vector3d &g, VectorXd &x)
 {
-    solveGyroscopeBias(all_image_frame, Bgs);//¼ÆËãÍÓÂİÒÇÆ«ÖÃ
+    solveGyroscopeBias(all_image_frame, Bgs);//è®¡ç®—é™€èºä»ªåç½®
 
-    if(LinearAlignment(all_image_frame, g, x))//¼ÆËã³ß¶È£¬ÖØÁ¦¼ÓËÙ¶ÈºÍËÙ¶È
+    if(LinearAlignment(all_image_frame, g, x))//è®¡ç®—å°ºåº¦ï¼Œé‡åŠ›åŠ é€Ÿåº¦å’Œé€Ÿåº¦
         return true;
     else 
         return false;

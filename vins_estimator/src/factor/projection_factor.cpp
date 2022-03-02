@@ -31,34 +31,34 @@ bool ProjectionFactor::Evaluate(double const *const *parameters, double *residua
     Eigen::Quaterniond qic(parameters[2][6], parameters[2][3], parameters[2][4], parameters[2][5]);
 
 
-    //pts_i ÊÇiÊ±¿Ì¹éÒ»»¯Ïà»ú×ø±êÏµÏÂµÄ3D×ø±ê
-    //µÚiÖ¡Ïà»ú×ø±êÏµÏÂµÄµÄÄæÉî¶È
+    //pts_i æ˜¯iæ—¶åˆ»å½’ä¸€åŒ–ç›¸æœºåæ ‡ç³»ä¸‹çš„3Dåæ ‡
+    //ç¬¬iå¸§ç›¸æœºåæ ‡ç³»ä¸‹çš„çš„é€†æ·±åº¦
     double inv_dep_i = parameters[3][0];
-    //µÚiÖ¡Ïà»ú×ø±êÏµÏÂµÄ3D×ø±ê
+    //ç¬¬iå¸§ç›¸æœºåæ ‡ç³»ä¸‹çš„3Dåæ ‡
     Eigen::Vector3d pts_camera_i = pts_i / inv_dep_i;
-    //µÚiÖ¡IMU×ø±êÏµÏÂµÄ3D×ø±ê
+    //ç¬¬iå¸§IMUåæ ‡ç³»ä¸‹çš„3Dåæ ‡
     Eigen::Vector3d pts_imu_i = qic * pts_camera_i + tic;
-    //ÊÀ½ç×ø±êÏµÏÂµÄ3D×ø±ê
+    //ä¸–ç•Œåæ ‡ç³»ä¸‹çš„3Dåæ ‡
     Eigen::Vector3d pts_w = Qi * pts_imu_i + Pi;
-    //µÚjÖ¡imu×ø±êÏµÏÂµÄ3D×ø±ê
+    //ç¬¬jå¸§imuåæ ‡ç³»ä¸‹çš„3Dåæ ‡
     Eigen::Vector3d pts_imu_j = Qj.inverse() * (pts_w - Pj);
-    //µÚjÖ¡Ïà»ú×ø±êÏµÏÂµÄ3D×ø±ê
+    //ç¬¬jå¸§ç›¸æœºåæ ‡ç³»ä¸‹çš„3Dåæ ‡
     Eigen::Vector3d pts_camera_j = qic.inverse() * (pts_imu_j - tic);
     Eigen::Map<Eigen::Vector2d> residual(residuals);
 
 
-    // ²Ğ²î¹¹½¨
-    // ¸ù¾İ²»Í¬µÄÏà»úÄ£ĞÍ
+    // æ®‹å·®æ„å»º
+    // æ ¹æ®ä¸åŒçš„ç›¸æœºæ¨¡å‹
 #ifdef UNIT_SPHERE_ERROR 
     residual =  tangent_base * (pts_camera_j.normalized() - pts_j.normalized());
-#else//Õë¿×Ïà»úÄ£ĞÍ
+#else//é’ˆå­”ç›¸æœºæ¨¡å‹
     double dep_j = pts_camera_j.z();
     residual = (pts_camera_j / dep_j).head<2>() - pts_j.head<2>();
 #endif
 
     residual = sqrt_info * residual;
 
-    //reduce ±íÊ¾²Ğ²îresidual¶Ôfci£¨pts_camera_j£©µÄµ¼Êı£¬Í¬Ñù¸ù¾İ²»Í¬µÄÏà»úÄ£ĞÍ
+    //reduce è¡¨ç¤ºæ®‹å·®residualå¯¹fciï¼ˆpts_camera_jï¼‰çš„å¯¼æ•°ï¼ŒåŒæ ·æ ¹æ®ä¸åŒçš„ç›¸æœºæ¨¡å‹
     if (jacobians)
     {
         Eigen::Matrix3d Ri = Qi.toRotationMatrix();
@@ -76,16 +76,16 @@ bool ProjectionFactor::Evaluate(double const *const *parameters, double *residua
                      - x1 * x2 / pow(norm, 3),            1.0 / norm - x2 * x2 / pow(norm, 3), - x2 * x3 / pow(norm, 3),
                      - x1 * x3 / pow(norm, 3),            - x2 * x3 / pow(norm, 3),            1.0 / norm - x3 * x3 / pow(norm, 3);
         reduce = tangent_base * norm_jaco;
-#else//Õë¿×Ïà»úÄ£ĞÍ
+#else//é’ˆå­”ç›¸æœºæ¨¡å‹
         reduce << 1. / dep_j, 0, -pts_camera_j(0) / (dep_j * dep_j),
             0, 1. / dep_j, -pts_camera_j(1) / (dep_j * dep_j);
 #endif
         reduce = sqrt_info * reduce;
 
 
-        // ²Ğ²îÏîµÄJacobian
-        // ÏÈÇófci¶Ô¸÷ÏîµÄJacobian£¬È»ºóÓÃÁ´Ê½·¨Ôò³ËÆğÀ´
-        // ¶ÔµÚiÖ¡µÄÎ»×Ë pbi,qbi      2X7µÄ¾ØÕó ×îºóÒ»ÏîÊÇ0
+        // æ®‹å·®é¡¹çš„Jacobian
+        // å…ˆæ±‚fciå¯¹å„é¡¹çš„Jacobianï¼Œç„¶åç”¨é“¾å¼æ³•åˆ™ä¹˜èµ·æ¥
+        // å¯¹ç¬¬iå¸§çš„ä½å§¿ pbi,qbi      2X7çš„çŸ©é˜µ æœ€åä¸€é¡¹æ˜¯0
         if (jacobians[0]) 
         {
             Eigen::Map<Eigen::Matrix<double, 2, 7, Eigen::RowMajor>> jacobian_pose_i(jacobians[0]);
@@ -97,7 +97,7 @@ bool ProjectionFactor::Evaluate(double const *const *parameters, double *residua
             jacobian_pose_i.leftCols<6>() = reduce * jaco_i;
             jacobian_pose_i.rightCols<1>().setZero();
         }
-        // ¶ÔµÚjÖ¡µÄÎ»×Ë pbj,qbj
+        // å¯¹ç¬¬jå¸§çš„ä½å§¿ pbj,qbj
         if (jacobians[1])
         {
             Eigen::Map<Eigen::Matrix<double, 2, 7, Eigen::RowMajor>> jacobian_pose_j(jacobians[1]);
@@ -109,7 +109,7 @@ bool ProjectionFactor::Evaluate(double const *const *parameters, double *residua
             jacobian_pose_j.leftCols<6>() = reduce * jaco_j;
             jacobian_pose_j.rightCols<1>().setZero();
         }
-        // ¶ÔÏà»úµ½IMUµÄÍâ²Î pbc,qbc (qic,tic)
+        // å¯¹ç›¸æœºåˆ°IMUçš„å¤–å‚ pbc,qbc (qic,tic)
         if (jacobians[2])
         {
             Eigen::Map<Eigen::Matrix<double, 2, 7, Eigen::RowMajor>> jacobian_ex_pose(jacobians[2]);
@@ -121,7 +121,7 @@ bool ProjectionFactor::Evaluate(double const *const *parameters, double *residua
             jacobian_ex_pose.leftCols<6>() = reduce * jaco_ex;
             jacobian_ex_pose.rightCols<1>().setZero();
         }
-        // ¶ÔÄæÉî¶È \lambda (inv_dep_i)
+        // å¯¹é€†æ·±åº¦ \lambda (inv_dep_i)
         if (jacobians[3])
         {
             Eigen::Map<Eigen::Vector2d> jacobian_feature(jacobians[3]);

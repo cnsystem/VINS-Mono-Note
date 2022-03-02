@@ -27,7 +27,7 @@ void reduceVector(vector<int> &v, vector<uchar> status);
 
 /**
 * @class FeatureTracker
-* @Description ÊÓ¾õÇ°¶ËÔ¤´¦Àí£º¶ÔÃ¿¸öÏà»ú½øĞĞ½ÇµãLK¹âÁ÷¸ú×Ù
+* @Description è§†è§‰å‰ç«¯é¢„å¤„ç†ï¼šå¯¹æ¯ä¸ªç›¸æœºè¿›è¡Œè§’ç‚¹LKå…‰æµè·Ÿè¸ª
 */
 class FeatureTracker
 {
@@ -50,33 +50,33 @@ class FeatureTracker
 
     void undistortedPoints();
 
-    cv::Mat mask;//Í¼ÏñÑÚÂë
-    cv::Mat fisheye_mask;//ÓãÑÛÏà»úmask£¬ÓÃÀ´È¥³ı±ßÔµÔëµã
+    cv::Mat mask;//å›¾åƒæ©ç 
+    cv::Mat fisheye_mask;//é±¼çœ¼ç›¸æœºmaskï¼Œç”¨æ¥å»é™¤è¾¹ç¼˜å™ªç‚¹
 
-    // prev_imgÊÇÉÏÒ»´Î·¢²¼µÄÖ¡µÄÍ¼ÏñÊı¾İ
-    // cur_imgÊÇ¹âÁ÷¸ú×ÙµÄÇ°Ò»Ö¡µÄÍ¼ÏñÊı¾İ
-    // forw_imgÊÇ¹âÁ÷¸ú×ÙµÄºóÒ»Ö¡µÄÍ¼ÏñÊı¾İ
+    // prev_imgæ˜¯ä¸Šä¸€æ¬¡å‘å¸ƒçš„å¸§çš„å›¾åƒæ•°æ®
+    // cur_imgæ˜¯å…‰æµè·Ÿè¸ªçš„å‰ä¸€å¸§çš„å›¾åƒæ•°æ®
+    // forw_imgæ˜¯å…‰æµè·Ÿè¸ªçš„åä¸€å¸§çš„å›¾åƒæ•°æ®
     cv::Mat prev_img, cur_img, forw_img;
 
-    vector<cv::Point2f> n_pts;//Ã¿Ò»Ö¡ÖĞĞÂÌáÈ¡µÄÌØÕ÷µã
+    vector<cv::Point2f> n_pts;//æ¯ä¸€å¸§ä¸­æ–°æå–çš„ç‰¹å¾ç‚¹
 
     vector<cv::Point2f> prev_pts, cur_pts, forw_pts;
 
-    vector<cv::Point2f> prev_un_pts, cur_un_pts;//¹éÒ»»¯Ïà»ú×ø±êÏµÏÂµÄ×ø±ê
+    vector<cv::Point2f> prev_un_pts, cur_un_pts;//å½’ä¸€åŒ–ç›¸æœºåæ ‡ç³»ä¸‹çš„åæ ‡
     
-    vector<cv::Point2f> pts_velocity;//µ±Ç°Ö¡Ïà¶ÔÇ°Ò»Ö¡ÌØÕ÷µãÑØx,y·½ÏòµÄÏñËØÒÆ¶¯ËÙ¶È
+    vector<cv::Point2f> pts_velocity;//å½“å‰å¸§ç›¸å¯¹å‰ä¸€å¸§ç‰¹å¾ç‚¹æ²¿x,yæ–¹å‘çš„åƒç´ ç§»åŠ¨é€Ÿåº¦
 
-    vector<int> ids;//ÄÜ¹»±»¸ú×Ùµ½µÄÌØÕ÷µãµÄid
+    vector<int> ids;//èƒ½å¤Ÿè¢«è·Ÿè¸ªåˆ°çš„ç‰¹å¾ç‚¹çš„id
 
-    vector<int> track_cnt;//µ±Ç°Ö¡forw_imgÖĞÃ¿¸öÌØÕ÷µã±»×·×ÙµÄÊ±¼ä´ÎÊı
+    vector<int> track_cnt;//å½“å‰å¸§forw_imgä¸­æ¯ä¸ªç‰¹å¾ç‚¹è¢«è¿½è¸ªçš„æ—¶é—´æ¬¡æ•°
 
     map<int, cv::Point2f> cur_un_pts_map;
     map<int, cv::Point2f> prev_un_pts_map;
 
-    camodocal::CameraPtr m_camera;//Ïà»úÄ£ĞÍ
+    camodocal::CameraPtr m_camera;//ç›¸æœºæ¨¡å‹
 
     double cur_time;
     double prev_time;
 
-    static int n_id;//ÌØÕ÷µãid£¬Ã¿¼ì²âµ½Ò»¸öĞÂµÄÌØÕ÷µã£¬¾Í½«n_id×÷Îª¸ÃÌØÕ÷µãµÄid£¬È»ºón_id¼Ó1
+    static int n_id;//ç‰¹å¾ç‚¹idï¼Œæ¯æ£€æµ‹åˆ°ä¸€ä¸ªæ–°çš„ç‰¹å¾ç‚¹ï¼Œå°±å°†n_idä½œä¸ºè¯¥ç‰¹å¾ç‚¹çš„idï¼Œç„¶ån_idåŠ 1
 };

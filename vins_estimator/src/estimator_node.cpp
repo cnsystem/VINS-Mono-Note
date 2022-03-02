@@ -15,7 +15,7 @@
 
 Estimator estimator;
 
-std::condition_variable con;//Ìõ¼ş±äÁ¿
+std::condition_variable con;//æ¡ä»¶å˜é‡
 double current_time = -1;
 
 queue<sensor_msgs::ImuConstPtr> imu_buf;
@@ -24,7 +24,7 @@ queue<sensor_msgs::PointCloudConstPtr> relo_buf;
 
 int sum_of_wait = 0;
 
-//»¥³âÁ¿
+//äº’æ–¥é‡
 std::mutex m_buf;
 std::mutex m_state;
 std::mutex i_buf;
@@ -32,7 +32,7 @@ std::mutex m_estimator;
 
 double latest_time;
 
-//IMUÏî[P,Q,B,Ba,Bg,a,g]
+//IMUé¡¹[P,Q,B,Ba,Bg,a,g]
 Eigen::Vector3d tmp_P;
 Eigen::Quaterniond tmp_Q;
 Eigen::Vector3d tmp_V;
@@ -44,12 +44,12 @@ bool init_feature = 0;
 bool init_imu = 1;
 double last_imu_t = 0;
 
-//´ÓIMU²âÁ¿Öµimu_msgºÍÉÏÒ»¸öPVQµİÍÆµÃµ½ÏÂÒ»¸ötmp_Q£¬tmp_P£¬tmp_V£¬ÖĞÖµ»ı·Ö
+//ä»IMUæµ‹é‡å€¼imu_msgå’Œä¸Šä¸€ä¸ªPVQé€’æ¨å¾—åˆ°ä¸‹ä¸€ä¸ªtmp_Qï¼Œtmp_Pï¼Œtmp_Vï¼Œä¸­å€¼ç§¯åˆ†
 void predict(const sensor_msgs::ImuConstPtr &imu_msg)
 {
     double t = imu_msg->header.stamp.toSec();
 
-    //init_imu=1±íÊ¾µÚÒ»¸öIMUÊı¾İ
+    //init_imu=1è¡¨ç¤ºç¬¬ä¸€ä¸ªIMUæ•°æ®
     if (init_imu)
     {
         latest_time = t;
@@ -86,8 +86,8 @@ void predict(const sensor_msgs::ImuConstPtr &imu_msg)
     gyr_0 = angular_velocity;
 }
 
-//´Ó¹À¼ÆÆ÷ÖĞµÃµ½»¬¶¯´°¿Úµ±Ç°Í¼ÏñÖ¡µÄimu¸üĞÂÏî[P,Q,V,ba,bg,a,g]
-//¶Ôimu_bufÖĞÊ£ÓàµÄimu_msg½øĞĞPVQµİÍÆ
+//ä»ä¼°è®¡å™¨ä¸­å¾—åˆ°æ»‘åŠ¨çª—å£å½“å‰å›¾åƒå¸§çš„imuæ›´æ–°é¡¹[P,Q,V,ba,bg,a,g]
+//å¯¹imu_bufä¸­å‰©ä½™çš„imu_msgè¿›è¡ŒPVQé€’æ¨
 void update()
 {
     TicToc t_predict;
@@ -107,10 +107,10 @@ void update()
 }
 
 /**
- * @brief   ¶ÔimuºÍÍ¼ÏñÊı¾İ½øĞĞ¶ÔÆë²¢×éºÏ
+ * @brief   å¯¹imuå’Œå›¾åƒæ•°æ®è¿›è¡Œå¯¹é½å¹¶ç»„åˆ
  * @Description     img:    i -------- j  -  -------- k
  *                  imu:    - jjjjjjjj - j/k kkkkkkkk -  
- *                  Ö±µ½°Ñ»º´æÖĞµÄÍ¼ÏñÌØÕ÷Êı¾İ»òÕßIMUÊı¾İÈ¡Íê£¬²ÅÄÜ¹»Ìø³ö´Ëº¯Êı£¬²¢·µ»ØÊı¾İ           
+ *                  ç›´åˆ°æŠŠç¼“å­˜ä¸­çš„å›¾åƒç‰¹å¾æ•°æ®æˆ–è€…IMUæ•°æ®å–å®Œï¼Œæ‰èƒ½å¤Ÿè·³å‡ºæ­¤å‡½æ•°ï¼Œå¹¶è¿”å›æ•°æ®           
  * @return  vector<std::pair<vector<ImuConstPtr>, PointCloudConstPtr>> (IMUs, img_msg)s
 */
 std::vector<std::pair<std::vector<sensor_msgs::ImuConstPtr>, sensor_msgs::PointCloudConstPtr>>
@@ -123,7 +123,7 @@ getMeasurements()
         if (imu_buf.empty() || feature_buf.empty())
             return measurements;
 
-        //¶ÔÆë±ê×¼£ºIMU×îºóÒ»¸öÊı¾İµÄÊ±¼äÒª´óÓÚµÚÒ»¸öÍ¼ÏñÌØÕ÷Êı¾İµÄÊ±¼ä
+        //å¯¹é½æ ‡å‡†ï¼šIMUæœ€åä¸€ä¸ªæ•°æ®çš„æ—¶é—´è¦å¤§äºç¬¬ä¸€ä¸ªå›¾åƒç‰¹å¾æ•°æ®çš„æ—¶é—´
         if (!(imu_buf.back()->header.stamp.toSec() > feature_buf.front()->header.stamp.toSec() + estimator.td))
         {
             //ROS_WARN("wait for imu, only should happen at the beginning");
@@ -131,7 +131,7 @@ getMeasurements()
             return measurements;
         }
 
-        //¶ÔÆë±ê×¼£ºIMUµÚÒ»¸öÊı¾İµÄÊ±¼äÒªĞ¡ÓÚµÚÒ»¸öÍ¼ÏñÌØÕ÷Êı¾İµÄÊ±¼ä
+        //å¯¹é½æ ‡å‡†ï¼šIMUç¬¬ä¸€ä¸ªæ•°æ®çš„æ—¶é—´è¦å°äºç¬¬ä¸€ä¸ªå›¾åƒç‰¹å¾æ•°æ®çš„æ—¶é—´
         if (!(imu_buf.front()->header.stamp.toSec() < feature_buf.front()->header.stamp.toSec() + estimator.td))
         {
             ROS_WARN("throw img, only should happen at the beginning");
@@ -144,15 +144,15 @@ getMeasurements()
 
         std::vector<sensor_msgs::ImuConstPtr> IMUs;
 
-        //Í¼ÏñÊı¾İ(img_msg)£¬¶ÔÓ¦¶à×éÔÚÊ±¼ä´ÁÄÚµÄimuÊı¾İ,È»ºóÈûÈëmeasurements
+        //å›¾åƒæ•°æ®(img_msg)ï¼Œå¯¹åº”å¤šç»„åœ¨æ—¶é—´æˆ³å†…çš„imuæ•°æ®,ç„¶åå¡å…¥measurements
         while (imu_buf.front()->header.stamp.toSec() < img_msg->header.stamp.toSec() + estimator.td)
         {
-            //emplace_backÏà±Èpush_backÄÜ¸üºÃµØ±ÜÃâÄÚ´æµÄ¿½±´ÓëÒÆ¶¯
+            //emplace_backç›¸æ¯”push_backèƒ½æ›´å¥½åœ°é¿å…å†…å­˜çš„æ‹·è´ä¸ç§»åŠ¨
             IMUs.emplace_back(imu_buf.front());
             imu_buf.pop();
         }
 
-        //ÕâÀï°ÑÏÂÒ»¸öimu_msgÒ²·Å½øÈ¥ÁË,µ«Ã»ÓĞpop£¬Òò´Ëµ±Ç°Í¼ÏñÖ¡ºÍÏÂÒ»Í¼ÏñÖ¡»á¹²ÓÃÕâ¸öimu_msg
+        //è¿™é‡ŒæŠŠä¸‹ä¸€ä¸ªimu_msgä¹Ÿæ”¾è¿›å»äº†,ä½†æ²¡æœ‰popï¼Œå› æ­¤å½“å‰å›¾åƒå¸§å’Œä¸‹ä¸€å›¾åƒå¸§ä¼šå…±ç”¨è¿™ä¸ªimu_msg
         IMUs.emplace_back(imu_buf.front());
         
         if (IMUs.empty())
@@ -163,10 +163,10 @@ getMeasurements()
     return measurements;
 }
 
-//imu»Øµ÷º¯Êı£¬½«imu_msg±£´æµ½imu_buf£¬IMU×´Ì¬µİÍÆ²¢·¢²¼[P,Q,V,header]
+//imuå›è°ƒå‡½æ•°ï¼Œå°†imu_msgä¿å­˜åˆ°imu_bufï¼ŒIMUçŠ¶æ€é€’æ¨å¹¶å‘å¸ƒ[P,Q,V,header]
 void imu_callback(const sensor_msgs::ImuConstPtr &imu_msg)
 {
-    //ÅĞ¶ÏÊ±¼ä¼ä¸ôÊÇ·ñÎªÕı
+    //åˆ¤æ–­æ—¶é—´é—´éš”æ˜¯å¦ä¸ºæ­£
     if (imu_msg->header.stamp.toSec() <= last_imu_t)
     {
         ROS_WARN("imu message in disorder!");
@@ -179,24 +179,24 @@ void imu_callback(const sensor_msgs::ImuConstPtr &imu_msg)
     imu_buf.push(imu_msg);
     m_buf.unlock();
 
-    con.notify_one();//»½ĞÑ×÷ÓÃÓÚprocessÏß³ÌÖĞµÄ»ñÈ¡¹Û²âÖµÊı¾İµÄº¯Êı
+    con.notify_one();//å”¤é†’ä½œç”¨äºprocessçº¿ç¨‹ä¸­çš„è·å–è§‚æµ‹å€¼æ•°æ®çš„å‡½æ•°
 
     last_imu_t = imu_msg->header.stamp.toSec();
 
     {
-        //¹¹Ôì»¥³âËøm_state£¬Îö¹¹Ê±½âËø
+        //æ„é€ äº’æ–¥é”m_stateï¼Œææ„æ—¶è§£é”
         std::lock_guard<std::mutex> lg(m_state);
-        predict(imu_msg);//µİÍÆµÃµ½IMUµÄPQV
+        predict(imu_msg);//é€’æ¨å¾—åˆ°IMUçš„PQV
         std_msgs::Header header = imu_msg->header;
         header.frame_id = "world";
 
-        //·¢²¼×îĞÂµÄÓÉIMUÖ±½ÓµİÍÆµÃµ½µÄPQV
+        //å‘å¸ƒæœ€æ–°çš„ç”±IMUç›´æ¥é€’æ¨å¾—åˆ°çš„PQV
         if (estimator.solver_flag == Estimator::SolverFlag::NON_LINEAR)
             pubLatestOdometry(tmp_P, tmp_Q, tmp_V, header);
     }
 }
 
-//feature»Øµ÷º¯Êı£¬½«feature_msg·ÅÈëfeature_buf     
+//featureå›è°ƒå‡½æ•°ï¼Œå°†feature_msgæ”¾å…¥feature_buf     
 void feature_callback(const sensor_msgs::PointCloudConstPtr &feature_msg)
 {
     if (!init_feature)
@@ -213,7 +213,7 @@ void feature_callback(const sensor_msgs::PointCloudConstPtr &feature_msg)
     con.notify_one();
 }
 
-//restart»Øµ÷º¯Êı£¬ÊÕµ½restartÊ±Çå¿Õfeature_bufºÍimu_buf£¬¹À¼ÆÆ÷ÖØÖÃ£¬Ê±¼äÖØÖÃ
+//restartå›è°ƒå‡½æ•°ï¼Œæ”¶åˆ°restartæ—¶æ¸…ç©ºfeature_bufå’Œimu_bufï¼Œä¼°è®¡å™¨é‡ç½®ï¼Œæ—¶é—´é‡ç½®
 void restart_callback(const std_msgs::BoolConstPtr &restart_msg)
 {
     if (restart_msg->data == true)
@@ -238,7 +238,7 @@ void restart_callback(const std_msgs::BoolConstPtr &restart_msg)
     return;
 }
 
-//relocalization»Øµ÷º¯Êı£¬½«points_msg·ÅÈërelo_buf        
+//relocalizationå›è°ƒå‡½æ•°ï¼Œå°†points_msgæ”¾å…¥relo_buf        
 void relocalization_callback(const sensor_msgs::PointCloudConstPtr &points_msg)
 {
     //printf("relocalization callback! \n");
@@ -248,11 +248,11 @@ void relocalization_callback(const sensor_msgs::PointCloudConstPtr &points_msg)
 }
 
 /**
- * @brief   VIOµÄÖ÷Ïß³Ì
- * @Description µÈ´ı²¢»ñÈ¡measurements£º(IMUs, img_msg)s£¬¼ÆËãdt
- *              estimator.processIMU()½øĞĞIMUÔ¤»ı·Ö         
- *              estimator.setReloFrame()ÉèÖÃÖØ¶¨Î»Ö¡
- *              estimator.processImage()´¦ÀíÍ¼ÏñÖ¡£º³õÊ¼»¯£¬½ôñîºÏµÄ·ÇÏßĞÔÓÅ»¯     
+ * @brief   VIOçš„ä¸»çº¿ç¨‹
+ * @Description ç­‰å¾…å¹¶è·å–measurementsï¼š(IMUs, img_msg)sï¼Œè®¡ç®—dt
+ *              estimator.processIMU()è¿›è¡ŒIMUé¢„ç§¯åˆ†         
+ *              estimator.setReloFrame()è®¾ç½®é‡å®šä½å¸§
+ *              estimator.processImage()å¤„ç†å›¾åƒå¸§ï¼šåˆå§‹åŒ–ï¼Œç´§è€¦åˆçš„éçº¿æ€§ä¼˜åŒ–     
  * @return      void
 */
 void process()
@@ -263,8 +263,8 @@ void process()
         
         std::unique_lock<std::mutex> lk(m_buf);
 
-        //µÈ´ıÉÏÃæÁ½¸ö½ÓÊÕÊı¾İÍê³É¾Í»á±»»½ĞÑ
-        //ÔÚÌáÈ¡measurementsÊ±»¥³âËøm_buf»áËø×¡£¬´ËÊ±ÎŞ·¨½ÓÊÕÊı¾İ
+        //ç­‰å¾…ä¸Šé¢ä¸¤ä¸ªæ¥æ”¶æ•°æ®å®Œæˆå°±ä¼šè¢«å”¤é†’
+        //åœ¨æå–measurementsæ—¶äº’æ–¥é”m_bufä¼šé”ä½ï¼Œæ­¤æ—¶æ— æ³•æ¥æ”¶æ•°æ®
         con.wait(lk, [&]
                  {
             return (measurements = getMeasurements()).size() != 0;
@@ -274,7 +274,7 @@ void process()
         m_estimator.lock();
         for (auto &measurement : measurements)
         {
-            //¶ÔÓ¦Õâ¶ÎµÄimg data
+            //å¯¹åº”è¿™æ®µçš„img data
             auto img_msg = measurement.second;
             double dx = 0, dy = 0, dz = 0, rx = 0, ry = 0, rz = 0;
             for (auto &imu_msg : measurement.first)
@@ -282,7 +282,7 @@ void process()
                 double t = imu_msg->header.stamp.toSec();
                 double img_t = img_msg->header.stamp.toSec() + estimator.td;
 
-                //·¢ËÍIMUÊı¾İ½øĞĞÔ¤»ı·Ö
+                //å‘é€IMUæ•°æ®è¿›è¡Œé¢„ç§¯åˆ†
                 if (t <= img_t)
                 { 
                     if (current_time < 0)
@@ -296,7 +296,7 @@ void process()
                     rx = imu_msg->angular_velocity.x;
                     ry = imu_msg->angular_velocity.y;
                     rz = imu_msg->angular_velocity.z;
-                    //imuÔ¤»ı·Ö
+                    //imué¢„ç§¯åˆ†
                     estimator.processIMU(dt, Vector3d(dx, dy, dz), Vector3d(rx, ry, rz));
                     //printf("imu: dt:%f a: %f %f %f w: %f %f %f\n",dt, dx, dy, dz, rx, ry, rz);
 
@@ -325,7 +325,7 @@ void process()
             // set relocalization frame
             sensor_msgs::PointCloudConstPtr relo_msg = NULL;
             
-            //È¡³ö×îºóÒ»¸öÖØ¶¨Î»Ö¡
+            //å–å‡ºæœ€åä¸€ä¸ªé‡å®šä½å¸§
             while (!relo_buf.empty())
             {
                 relo_msg = relo_buf.front();
@@ -357,7 +357,7 @@ void process()
 
             TicToc t_s;
 
-            //½¨Á¢Ã¿¸öÌØÕ÷µãµÄ(camera_id,[x,y,z,u,v,vx,vy])sµÄmap£¬Ë÷ÒıÎªfeature_id
+            //å»ºç«‹æ¯ä¸ªç‰¹å¾ç‚¹çš„(camera_id,[x,y,z,u,v,vx,vy])sçš„mapï¼Œç´¢å¼•ä¸ºfeature_id
             map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> image;
             for (unsigned int i = 0; i < img_msg->points.size(); i++)
             {
@@ -377,7 +377,7 @@ void process()
                 image[feature_id].emplace_back(camera_id,  xyz_uv_velocity);
             }
             
-            //´¦ÀíÍ¼ÏñÌØÕ÷
+            //å¤„ç†å›¾åƒç‰¹å¾
             estimator.processImage(image, img_msg->header);
 
             double whole_t = t_s.toc();
@@ -385,16 +385,16 @@ void process()
             std_msgs::Header header = img_msg->header;
             header.frame_id = "world";
 
-            //¸øRVIZ·¢ËÍtopic
-            pubOdometry(estimator, header);//"odometry" Àï³Ì¼ÆĞÅÏ¢PQV
-            pubKeyPoses(estimator, header);//"key_poses" ¹Ø¼üµãÈıÎ¬×ø±ê
-            pubCameraPose(estimator, header);//"camera_pose" Ïà»úÎ»×Ë
-            pubPointCloud(estimator, header);//"history_cloud" µãÔÆĞÅÏ¢
-            pubTF(estimator, header);//"extrinsic" Ïà»úµ½IMUµÄÍâ²Î
-            pubKeyframe(estimator);//"keyframe_point"¡¢"keyframe_pose" ¹Ø¼üÖ¡Î»×ËºÍµãÔÆ
+            //ç»™RVIZå‘é€topic
+            pubOdometry(estimator, header);//"odometry" é‡Œç¨‹è®¡ä¿¡æ¯PQV
+            pubKeyPoses(estimator, header);//"key_poses" å…³é”®ç‚¹ä¸‰ç»´åæ ‡
+            pubCameraPose(estimator, header);//"camera_pose" ç›¸æœºä½å§¿
+            pubPointCloud(estimator, header);//"history_cloud" ç‚¹äº‘ä¿¡æ¯
+            pubTF(estimator, header);//"extrinsic" ç›¸æœºåˆ°IMUçš„å¤–å‚
+            pubKeyframe(estimator);//"keyframe_point"ã€"keyframe_pose" å…³é”®å¸§ä½å§¿å’Œç‚¹äº‘
 
             if (relo_msg != NULL)
-                pubRelocalization(estimator);//"relo_relative_pose" ÖØ¶¨Î»Î»×Ë
+                pubRelocalization(estimator);//"relo_relative_pose" é‡å®šä½ä½å§¿
             //ROS_ERROR("end: %f, at %f", img_msg->header.stamp.toSec(), ros::Time::now().toSec());
         }
         m_estimator.unlock();
@@ -402,7 +402,7 @@ void process()
         m_buf.lock();
         m_state.lock();
         if (estimator.solver_flag == Estimator::SolverFlag::NON_LINEAR)
-            update();//¸üĞÂIMU²ÎÊı[P,Q,V,ba,bg,a,g]
+            update();//æ›´æ–°IMUå‚æ•°[P,Q,V,ba,bg,a,g]
         m_state.unlock();
         m_buf.unlock();
     }
@@ -410,12 +410,12 @@ void process()
 
 int main(int argc, char **argv)
 {
-    //ROS³õÊ¼»¯£¬ÉèÖÃ¾ä±ún
+    //ROSåˆå§‹åŒ–ï¼Œè®¾ç½®å¥æŸ„n
     ros::init(argc, argv, "vins_estimator");
     ros::NodeHandle n("~");
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Info);
     
-    //¶ÁÈ¡²ÎÊı£¬ÉèÖÃ¹À¼ÆÆ÷²ÎÊı
+    //è¯»å–å‚æ•°ï¼Œè®¾ç½®ä¼°è®¡å™¨å‚æ•°
     readParameters(n);
     estimator.setParameter();
 
@@ -424,16 +424,16 @@ int main(int argc, char **argv)
 #endif
     ROS_WARN("waiting for image and imu...");
 
-    //ÓÃÓÚRVIZÏÔÊ¾µÄTopic
+    //ç”¨äºRVIZæ˜¾ç¤ºçš„Topic
     registerPub(n);
 
-    //¶©ÔÄIMU¡¢feature¡¢restart¡¢match_pointsµÄtopic,Ö´ĞĞ¸÷×Ô»Øµ÷º¯Êı
+    //è®¢é˜…IMUã€featureã€restartã€match_pointsçš„topic,æ‰§è¡Œå„è‡ªå›è°ƒå‡½æ•°
     ros::Subscriber sub_imu = n.subscribe(IMU_TOPIC, 2000, imu_callback, ros::TransportHints().tcpNoDelay());
     ros::Subscriber sub_image = n.subscribe("/feature_tracker/feature", 2000, feature_callback);
     ros::Subscriber sub_restart = n.subscribe("/feature_tracker/restart", 2000, restart_callback);
     ros::Subscriber sub_relo_points = n.subscribe("/pose_graph/match_points", 2000, relocalization_callback);
 
-    //´´½¨VIOÖ÷Ïß³Ì
+    //åˆ›å»ºVIOä¸»çº¿ç¨‹
     std::thread measurement_process{process};
     ros::spin();
 

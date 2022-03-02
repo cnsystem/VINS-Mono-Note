@@ -404,7 +404,7 @@ void pubKeyframe(const Estimator &estimator)
     }
 }
 
-//·¢²¼ÖØ¶¨Î»Ö¡µÄÎ»×ËĞÅÏ¢
+//å‘å¸ƒé‡å®šä½å¸§çš„ä½å§¿ä¿¡æ¯
 void pubRelocalization(const Estimator &estimator)
 {
     nav_msgs::Odometry odometry;

@@ -2,7 +2,7 @@
 
 template <typename Derived>
 
-//ÌŞ³ıstatusÎª0µÄµã
+//å‰”é™¤statusä¸º0çš„ç‚¹
 static void reduceVector(vector<Derived> &v, vector<uchar> status)
 {
     int j = 0;
@@ -12,7 +12,7 @@ static void reduceVector(vector<Derived> &v, vector<uchar> status)
     v.resize(j);
 }
 
-//ÔÚÏß¹¹½¨ĞÂ¹Ø¼üÖ¡
+//åœ¨çº¿æ„å»ºæ–°å…³é”®å¸§
 KeyFrame::KeyFrame(double _time_stamp, int _index, Vector3d &_vio_T_w_i, Matrix3d &_vio_R_w_i, cv::Mat &_image,
 		           vector<cv::Point3f> &_point_3d, vector<cv::Point2f> &_point_2d_uv, vector<cv::Point2f> &_point_2d_norm,
 		           vector<double> &_point_id, int _sequence)
@@ -42,7 +42,7 @@ KeyFrame::KeyFrame(double _time_stamp, int _index, Vector3d &_vio_T_w_i, Matrix3
 		image.release();
 }
 
-//ÔØÈëÏÈÇ°¹Ø¼üÖ¡
+//è½½å…¥å…ˆå‰å…³é”®å¸§
 KeyFrame::KeyFrame(double _time_stamp, int _index, Vector3d &_vio_T_w_i, Matrix3d &_vio_R_w_i, Vector3d &_T_w_i, Matrix3d &_R_w_i,
 					cv::Mat &_image, int _loop_index, Eigen::Matrix<double, 8, 1 > &_loop_info,
 					vector<cv::KeyPoint> &_keypoints, vector<cv::KeyPoint> &_keypoints_norm, vector<BRIEF::bitset> &_brief_descriptors)
@@ -74,7 +74,7 @@ KeyFrame::KeyFrame(double _time_stamp, int _index, Vector3d &_vio_T_w_i, Matrix3
 }
 
 
-//¼ÆËã´°¿ÚÖĞËùÓĞÌØÕ÷µãµÄÃèÊö×Ó
+//è®¡ç®—çª—å£ä¸­æ‰€æœ‰ç‰¹å¾ç‚¹çš„æè¿°å­
 void KeyFrame::computeWindowBRIEFPoint()
 {
 	BriefExtractor extractor(BRIEF_PATTERN_FILE.c_str());
@@ -87,7 +87,7 @@ void KeyFrame::computeWindowBRIEFPoint()
 	extractor(image, window_keypoints, window_brief_descriptors);
 }
 
-//¶îÍâ¼ì²âĞÂÌØÕ÷µã²¢¼ÆËãËùÓĞÌØÕ÷µãµÄÃèÊö×Ó£¬ÎªÁË»Ø»·¼ì²â
+//é¢å¤–æ£€æµ‹æ–°ç‰¹å¾ç‚¹å¹¶è®¡ç®—æ‰€æœ‰ç‰¹å¾ç‚¹çš„æè¿°å­ï¼Œä¸ºäº†å›ç¯æ£€æµ‹
 void KeyFrame::computeBRIEFPoint()
 {
 	BriefExtractor extractor(BRIEF_PATTERN_FILE.c_str());
@@ -95,17 +95,17 @@ void KeyFrame::computeBRIEFPoint()
 	if(1)
 		/*		
 		 *void cv::FAST	(	
-		 *	InputArray 	image,						¹Ø¼üµãËùÔÚµÄ»Ò¶ÈÍ¼Ïñ¡£
-		 *	std::vector< KeyPoint > & 	keypoints,	ÔÚÍ¼ÏñÉÏ¼ì²âµ½¹Ø¼üµã
-		 *	int 	threshold,						ÖĞĞÄÏñËØµÄÇ¿¶ÈÓë¸ÃÏñËØÖÜÎ§Ô²µÄÏñËØÖ®¼äµÄ²îÒìµÄãĞÖµ
-		 *	bool 	nonmaxSuppression = true 		ÊÇ·ñ¶Ô¼ì²âµ½µÄ½Çµã£¨¹Ø¼üµã£©Ó¦ÓÃ·Ç×î´óÒÖÖÆ
+		 *	InputArray 	image,						å…³é”®ç‚¹æ‰€åœ¨çš„ç°åº¦å›¾åƒã€‚
+		 *	std::vector< KeyPoint > & 	keypoints,	åœ¨å›¾åƒä¸Šæ£€æµ‹åˆ°å…³é”®ç‚¹
+		 *	int 	threshold,						ä¸­å¿ƒåƒç´ çš„å¼ºåº¦ä¸è¯¥åƒç´ å‘¨å›´åœ†çš„åƒç´ ä¹‹é—´çš„å·®å¼‚çš„é˜ˆå€¼
+		 *	bool 	nonmaxSuppression = true 		æ˜¯å¦å¯¹æ£€æµ‹åˆ°çš„è§’ç‚¹ï¼ˆå…³é”®ç‚¹ï¼‰åº”ç”¨éæœ€å¤§æŠ‘åˆ¶
 		 *)	 
 		*/
 		cv::FAST(image, keypoints, fast_th, true);
 	else
 	{
 		vector<cv::Point2f> tmp_pts;
-		//¼ì²â500¸öĞÂµÄÌØÕ÷µã²¢½«Æä·ÅÈëkeypoints
+		//æ£€æµ‹500ä¸ªæ–°çš„ç‰¹å¾ç‚¹å¹¶å°†å…¶æ”¾å…¥keypoints
 		cv::goodFeaturesToTrack(image, tmp_pts, 500, 0.01, 10);
 		for(int i = 0; i < (int)tmp_pts.size(); i++)
 		{
@@ -115,10 +115,10 @@ void KeyFrame::computeBRIEFPoint()
 		}
 	}
 
-	//¼ÆËãkeypointsÖĞËùÓĞÌØÕ÷µãµÄÃèÊö×Ó
+	//è®¡ç®—keypointsä¸­æ‰€æœ‰ç‰¹å¾ç‚¹çš„æè¿°å­
 	extractor(image, keypoints, brief_descriptors);
 
-	//½«ÌØÕ÷µãÈ¥»û±ä½ÃÕı
+	//å°†ç‰¹å¾ç‚¹å»ç•¸å˜çŸ«æ­£
 	for (int i = 0; i < (int)keypoints.size(); i++)
 	{
 		Eigen::Vector3d tmp_p;
@@ -129,13 +129,13 @@ void KeyFrame::computeBRIEFPoint()
 	}
 }
 
-//¼ÆËãBriefÃèÊö×Ó
+//è®¡ç®—Briefæè¿°å­
 void BriefExtractor::operator() (const cv::Mat &im, vector<cv::KeyPoint> &keys, vector<BRIEF::bitset> &descriptors) const
 {
   m_brief.compute(im, keys, descriptors);
 }
 
-//¹Ø¼üÖ¡ÖĞÄ³¸öÌØÕ÷µãµÄÃèÊö×ÓÓë»Ø»·Ö¡µÄËùÓĞÃèÊö×ÓÆ¥Åä
+//å…³é”®å¸§ä¸­æŸä¸ªç‰¹å¾ç‚¹çš„æè¿°å­ä¸å›ç¯å¸§çš„æ‰€æœ‰æè¿°å­åŒ¹é…
 bool KeyFrame::searchInAera(const BRIEF::bitset window_descriptor,
                             const std::vector<BRIEF::bitset> &descriptors_old,
                             const std::vector<cv::KeyPoint> &keypoints_old,
@@ -158,7 +158,7 @@ bool KeyFrame::searchInAera(const BRIEF::bitset window_descriptor,
         }
     }
     //printf("best dist %d", bestDist);
-    //ÕÒµ½ººÃ÷¾àÀëĞ¡ÓÚ80µÄ×îĞ¡ÖµºÍË÷Òı¼´Îª¸ÃÌØÕ÷µãµÄ×î¼ÑÆ¥Åä
+    //æ‰¾åˆ°æ±‰æ˜è·ç¦»å°äº80çš„æœ€å°å€¼å’Œç´¢å¼•å³ä¸ºè¯¥ç‰¹å¾ç‚¹çš„æœ€ä½³åŒ¹é…
     if (bestIndex != -1 && bestDist < 80)
     {
       best_match = keypoints_old[bestIndex].pt;
@@ -170,13 +170,13 @@ bool KeyFrame::searchInAera(const BRIEF::bitset window_descriptor,
 }
 
 /**
- * @brief   ½«¹Ø¼üÖ¡Óë»Ø»·Ö¡½øĞĞBRIEFÃèÊö×ÓÆ¥Åä
- * @param[out]  matched_2d_old  	»Ø»·Ö¡Æ¥ÅäºóµÄ¶şÎ¬×ø±ê
- * @param[out]  matched_2d_old_norm »Ø»·Ö¡Æ¥ÅäºóµÄ¶şÎ¬¹éÒ»»¯×ø±ê
- * @param[out]  status				Æ¥Åä×´Ì¬£¬³É¹¦Îª1
- * @param[in]   descriptors_old		»Ø»·Ö¡µÄÃèÊö×Ó
- * @param[in] 	keypoints_old 		»Ø»·Ö¡µÄ¶şÎ¬×ø±ê
- * @param[in] 	keypoints_old_norm	»Ø»·Ö¡µÄ¶şÎ¬¹éÒ»»¯×ø±ê
+ * @brief   å°†å…³é”®å¸§ä¸å›ç¯å¸§è¿›è¡ŒBRIEFæè¿°å­åŒ¹é…
+ * @param[out]  matched_2d_old  	å›ç¯å¸§åŒ¹é…åçš„äºŒç»´åæ ‡
+ * @param[out]  matched_2d_old_norm å›ç¯å¸§åŒ¹é…åçš„äºŒç»´å½’ä¸€åŒ–åæ ‡
+ * @param[out]  status				åŒ¹é…çŠ¶æ€ï¼ŒæˆåŠŸä¸º1
+ * @param[in]   descriptors_old		å›ç¯å¸§çš„æè¿°å­
+ * @param[in] 	keypoints_old 		å›ç¯å¸§çš„äºŒç»´åæ ‡
+ * @param[in] 	keypoints_old_norm	å›ç¯å¸§çš„äºŒç»´å½’ä¸€åŒ–åæ ‡
  * @return      void
 */
 void KeyFrame::searchByBRIEFDes(std::vector<cv::Point2f> &matched_2d_old,
@@ -200,7 +200,7 @@ void KeyFrame::searchByBRIEFDes(std::vector<cv::Point2f> &matched_2d_old,
 
 }
 
-//Í¨¹ıRANSACµÄ»ù±¾¾ØÕó¼ìÑéÈ¥³ıÆ¥ÅäÒì³£µÄµã
+//é€šè¿‡RANSACçš„åŸºæœ¬çŸ©é˜µæ£€éªŒå»é™¤åŒ¹é…å¼‚å¸¸çš„ç‚¹
 void KeyFrame::FundmantalMatrixRANSAC(const std::vector<cv::Point2f> &matched_2d_cur_norm,
                                       const std::vector<cv::Point2f> &matched_2d_old_norm,
                                       vector<uchar> &status)
@@ -227,7 +227,7 @@ void KeyFrame::FundmantalMatrixRANSAC(const std::vector<cv::Point2f> &matched_2d
     }
 }
 
-//Í¨¹ıRANSACµÄPNP¼ìÑéÈ¥³ıÆ¥ÅäÒì³£µÄµã
+//é€šè¿‡RANSACçš„PNPæ£€éªŒå»é™¤åŒ¹é…å¼‚å¸¸çš„ç‚¹
 void KeyFrame::PnPRANSAC(const vector<cv::Point2f> &matched_2d_old_norm,
                          const std::vector<cv::Point3f> &matched_3d,
                          std::vector<uchar> &status,
@@ -286,7 +286,7 @@ void KeyFrame::PnPRANSAC(const vector<cv::Point2f> &matched_2d_old_norm,
 
 }
 
-//Ñ°ÕÒ²¢½¨Á¢¹Ø¼üÖ¡Óë»Ø»·Ö¡Ö®¼äµÄÆ¥Åä¹ØÏµ
+//å¯»æ‰¾å¹¶å»ºç«‹å…³é”®å¸§ä¸å›ç¯å¸§ä¹‹é—´çš„åŒ¹é…å…³ç³»
 bool KeyFrame::findConnection(KeyFrame* old_kf)
 {
 	TicToc tmp_t;
@@ -329,7 +329,7 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 	    }
 	#endif
 	//printf("search by des\n");
-	//¹Ø¼üÖ¡Óë»Ø»·Ö¡½øĞĞBRIEFÃèÊö×ÓÆ¥Åä£¬ÌŞ³ıÆ¥ÅäÊ§°ÜµÄµã
+	//å…³é”®å¸§ä¸å›ç¯å¸§è¿›è¡ŒBRIEFæè¿°å­åŒ¹é…ï¼Œå‰”é™¤åŒ¹é…å¤±è´¥çš„ç‚¹
 	searchByBRIEFDes(matched_2d_old, matched_2d_old_norm, status, old_kf->brief_descriptors, old_kf->keypoints, old_kf->keypoints_norm);
 	reduceVector(matched_2d_cur, status);
 	reduceVector(matched_2d_old, status);
@@ -436,10 +436,10 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 	Quaterniond relative_q;
 	double relative_yaw;
 
-	//Èô´ïµ½×îĞ¡»Ø»·Æ¥ÅäµãÊı
+	//è‹¥è¾¾åˆ°æœ€å°å›ç¯åŒ¹é…ç‚¹æ•°
 	if ((int)matched_2d_cur.size() > MIN_LOOP_NUM)
 	{
-		//RANSAC PnP¼ì²âÈ¥³ıÎóÆ¥ÅäµÄµã
+		//RANSAC PnPæ£€æµ‹å»é™¤è¯¯åŒ¹é…çš„ç‚¹
 		status.clear();
 	    PnPRANSAC(matched_2d_old_norm, matched_3d, status, PnP_T_old, PnP_R_old);
 	    reduceVector(matched_2d_cur, status);
@@ -456,20 +456,20 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 	        	cv::Mat gap_image(ROW, gap, CV_8UC1, cv::Scalar(255, 255, 255));
 	            cv::Mat gray_img, loop_match_img;
 	            cv::Mat old_img = old_kf->image;
-	            /*void cv::hconcat	(	Ë®Æ½´®ÁªÁ½¸öÍ¼Ïñ
-	             *	InputArray 	src1,	µÚÒ»¸öÊäÈë¾ØÕó
-				 *	InputArray 	src2,	µÚ¶ş¸öÊäÈë¾ØÕó
-				 *	OutputArray dst 	Êä³ö¾ØÕó£¬ĞĞÊıÓëÇ°Á½¸ö¾ØÕóÏàÍ¬£¬ÁĞÊıÎªËûÃÇµÄ×ÜºÍ
+	            /*void cv::hconcat	(	æ°´å¹³ä¸²è”ä¸¤ä¸ªå›¾åƒ
+	             *	InputArray 	src1,	ç¬¬ä¸€ä¸ªè¾“å…¥çŸ©é˜µ
+				 *	InputArray 	src2,	ç¬¬äºŒä¸ªè¾“å…¥çŸ©é˜µ
+				 *	OutputArray dst 	è¾“å‡ºçŸ©é˜µï¼Œè¡Œæ•°ä¸å‰ä¸¤ä¸ªçŸ©é˜µç›¸åŒï¼Œåˆ—æ•°ä¸ºä»–ä»¬çš„æ€»å’Œ
 				 *	)	
 	            */
-	            //ÕâÀï½«image¡¢gap_image¡¢old_imgË®Æ½Æ´½ÓÆğÀ´³ÉÎªgray_img
+	            //è¿™é‡Œå°†imageã€gap_imageã€old_imgæ°´å¹³æ‹¼æ¥èµ·æ¥æˆä¸ºgray_img
 	            cv::hconcat(image, gap_image, gap_image);
 	            cv::hconcat(gap_image, old_img, gray_img);
 
-	            //»Ò¶ÈÍ¼gray_img×ª»»³ÉRGBÍ¼loop_match_img
+	            //ç°åº¦å›¾gray_imgè½¬æ¢æˆRGBå›¾loop_match_img
 	            cvtColor(gray_img, loop_match_img, CV_GRAY2RGB);
 
-	            //ÔÚÍ¼Æ¬loop_match_imgÉÏ±ê×¢³öÆ¥ÅäµãºÍÖ®¼äµÄÁ¬Ïß
+	            //åœ¨å›¾ç‰‡loop_match_imgä¸Šæ ‡æ³¨å‡ºåŒ¹é…ç‚¹å’Œä¹‹é—´çš„è¿çº¿
 	            for(int i = 0; i< (int)matched_2d_cur.size(); i++)
 	            {
 	                cv::Point2f cur_pt = matched_2d_cur[i];
@@ -488,7 +488,7 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 	                cv::line(loop_match_img, matched_2d_cur[i], old_pt, cv::Scalar(0, 255, 0), 2, 8, 0);
 	            }
 
-	            //ÔÚloop_match_imgÏÂÃæ´¹Ö±Æ´½ÓÒ»¸önotation£¬Ğ´ÉÏµ±Ç°Ö¡ºÍÏÈÇ°Ö¡µÄË÷ÒıÖµºÍĞòÁĞºÅ
+	            //åœ¨loop_match_imgä¸‹é¢å‚ç›´æ‹¼æ¥ä¸€ä¸ªnotationï¼Œå†™ä¸Šå½“å‰å¸§å’Œå…ˆå‰å¸§çš„ç´¢å¼•å€¼å’Œåºåˆ—å·
 	            cv::Mat notation(50, COL + gap + COL, CV_8UC3, cv::Scalar(255, 255, 255));
 	            putText(notation, "current frame: " + to_string(index) + "  sequence: " + to_string(sequence), cv::Point2f(20, 30), CV_FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255), 3);
 	            putText(notation, "previous frame: " + to_string(old_kf->index) + "  sequence: " + to_string(old_kf->sequence), cv::Point2f(20 + COL + gap, 30), CV_FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255), 3);
@@ -501,7 +501,7 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 	                    << old_kf->index << "-" << "3pnp_match.jpg";
 	            cv::imwrite( path.str().c_str(), loop_match_img);
 	            */
-	            //Èô´ïµ½×îĞ¡»Ø»·Æ¥ÅäµãÊı£¬½«loop_match_imgµÄ¿íºÍ¸ßËõĞ¡Ò»°ë²¢·¢²¼Îªpub_match_img
+	            //è‹¥è¾¾åˆ°æœ€å°å›ç¯åŒ¹é…ç‚¹æ•°ï¼Œå°†loop_match_imgçš„å®½å’Œé«˜ç¼©å°ä¸€åŠå¹¶å‘å¸ƒä¸ºpub_match_img
 	            if ((int)matched_2d_cur.size() > MIN_LOOP_NUM)
 	            {
 	            	/*
@@ -518,7 +518,7 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 	    #endif
 	}
 
-	//Èô´ïµ½×îĞ¡»Ø»·Æ¥ÅäµãÊı
+	//è‹¥è¾¾åˆ°æœ€å°å›ç¯åŒ¹é…ç‚¹æ•°
 	if ((int)matched_2d_cur.size() > MIN_LOOP_NUM)
 	{
 	    relative_t = PnP_R_old.transpose() * (origin_vio_T - PnP_T_old);
@@ -528,7 +528,7 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 	    //cout << "pnp relative_t " << relative_t.transpose() << endl;
 	    //cout << "pnp relative_yaw " << relative_yaw << endl;
 	    
-	    //Ïà¶ÔÎ»×Ë¼ìÑé
+	    //ç›¸å¯¹ä½å§¿æ£€éªŒ
 	    if (abs(relative_yaw) < 30.0 && relative_t.norm() < 20.0)
 	    {
 
@@ -538,7 +538,7 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 	    	             relative_q.w(), relative_q.x(), relative_q.y(), relative_q.z(),
 	    	             relative_yaw;
 
-	    	//¿ìËÙÖØ¶¨Î»
+	    	//å¿«é€Ÿé‡å®šä½
 	    	if(FAST_RELOCALIZATION)
 	    	{
 			    sensor_msgs::PointCloud msg_match_points;
@@ -574,7 +574,7 @@ bool KeyFrame::findConnection(KeyFrame* old_kf)
 }
 
 
-//¼ÆËãÁ½¸öÃèÊö×ÓÖ®¼äµÄººÃ÷¾àÀë
+//è®¡ç®—ä¸¤ä¸ªæè¿°å­ä¹‹é—´çš„æ±‰æ˜è·ç¦»
 int KeyFrame::HammingDis(const BRIEF::bitset &a, const BRIEF::bitset &b)
 {
     BRIEF::bitset xor_of_bitset = a ^ b;
@@ -633,7 +633,7 @@ void KeyFrame::updateLoop(Eigen::Matrix<double, 8, 1 > &_loop_info)
 }
 
 
-//¶ÁÈ¡ ¹¹½¨×ÖµäÊ±Ê¹ÓÃµÄÏàÍ¬µÄBriefÄ£°åÎÄ¼ş£¬¹¹ÔìBriefExtractor
+//è¯»å– æ„å»ºå­—å…¸æ—¶ä½¿ç”¨çš„ç›¸åŒçš„Briefæ¨¡æ¿æ–‡ä»¶ï¼Œæ„é€ BriefExtractor
 BriefExtractor::BriefExtractor(const std::string &pattern_file)
 {
   // The DVision::BRIEF extractor computes a random pattern by default when

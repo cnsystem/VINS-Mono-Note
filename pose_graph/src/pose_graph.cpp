@@ -5,7 +5,7 @@ PoseGraph::PoseGraph()
     posegraph_visualization = new CameraPoseVisualization(1.0, 0.0, 1.0, 1.0);
     posegraph_visualization->setScale(0.1);
     posegraph_visualization->setLineWidth(0.01);
-    //´´½¨4×ÔÓÉ¶ÈÎ»×ËÍ¼ÓÅ»¯Ïß³Ì
+    //åˆ›å»º4è‡ªç”±åº¦ä½å§¿å›¾ä¼˜åŒ–çº¿ç¨‹
 	t_optimization = std::thread(&PoseGraph::optimize4DoF, this);
     earliest_loop_index = -1;
     t_drift = Eigen::Vector3d(0, 0, 0);
@@ -25,7 +25,7 @@ PoseGraph::~PoseGraph()
 	t_optimization.join();
 }
 
-//·¢²¼¹ì¼£µÄtopic
+//å‘å¸ƒè½¨è¿¹çš„topic
 void PoseGraph::registerPub(ros::NodeHandle &n)
 {
     pub_pg_path = n.advertise<nav_msgs::Path>("pose_graph_path", 1000);
@@ -35,7 +35,7 @@ void PoseGraph::registerPub(ros::NodeHandle &n)
         pub_path[i] = n.advertise<nav_msgs::Path>("path_" + to_string(i), 1000);
 }
 
-//¼ÓÔØBrief×Öµä
+//åŠ è½½Briefå­—å…¸
 void PoseGraph::loadVocabulary(std::string voc_path)
 {
     voc = new BriefVocabulary(voc_path);
@@ -43,7 +43,7 @@ void PoseGraph::loadVocabulary(std::string voc_path)
 }
 
 /**
- * @brief   Ìí¼Ó¹Ø¼üÖ¡£¬½øĞĞ»Ø»·¼ì²âÓë±Õ»·
+ * @brief   æ·»åŠ å…³é”®å¸§ï¼Œè¿›è¡Œå›ç¯æ£€æµ‹ä¸é—­ç¯
  * @Description 
  * @return      void
 */
@@ -53,7 +53,7 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
     Vector3d vio_P_cur;
     Matrix3d vio_R_cur;
 
-    //½¨Ò»¸öĞÂµÄÍ¼ÏñĞòÁĞ
+    //å»ºä¸€ä¸ªæ–°çš„å›¾åƒåºåˆ—
     if (sequence_cnt != cur_kf->sequence)
     {
         sequence_cnt++;
@@ -66,7 +66,7 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
         m_drift.unlock();
     }
     
-    //»ñÈ¡µ±Ç°Ö¡µÄÎ»×Ëvio_P_cur¡¢vio_R_cur²¢¸üĞÂ
+    //è·å–å½“å‰å¸§çš„ä½å§¿vio_P_curã€vio_R_curå¹¶æ›´æ–°
     cur_kf->getVioPose(vio_P_cur, vio_R_cur);
     vio_P_cur = w_r_vio * vio_P_cur + w_t_vio;
     vio_R_cur = w_r_vio * vio_R_cur;
@@ -78,7 +78,7 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
     if (flag_detect_loop)
     {
         TicToc tmp_t;
-        //»Ø»·¼ì²â£¬·µ»Ø»Ø»·ºòÑ¡Ö¡µÄË÷Òı
+        //å›ç¯æ£€æµ‹ï¼Œè¿”å›å›ç¯å€™é€‰å¸§çš„ç´¢å¼•
         loop_index = detectLoop(cur_kf, cur_kf->index);
     }
     else
@@ -90,13 +90,13 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
 	{
         //printf(" %d detect loop with %d \n", cur_kf->index, loop_index);
         
-        //»ñÈ¡»Ø»·ºòÑ¡Ö¡
+        //è·å–å›ç¯å€™é€‰å¸§
         KeyFrame* old_kf = getKeyFrame(loop_index);
 
-        //µ±Ç°Ö¡Óë»Ø»·ºòÑ¡Ö¡½øĞĞÃèÊö×ÓÆ¥Åä
+        //å½“å‰å¸§ä¸å›ç¯å€™é€‰å¸§è¿›è¡Œæè¿°å­åŒ¹é…
         if (cur_kf->findConnection(old_kf))
         {
-            //earliest_loop_indexÎª×îÔçµÄ»Ø»·ºòÑ¡Ö¡
+            //earliest_loop_indexä¸ºæœ€æ—©çš„å›ç¯å€™é€‰å¸§
             if (earliest_loop_index > loop_index || earliest_loop_index == -1)
                 earliest_loop_index = loop_index;
 
@@ -105,17 +105,17 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
             old_kf->getVioPose(w_P_old, w_R_old);
             cur_kf->getVioPose(vio_P_cur, vio_R_cur);
 
-            //»ñÈ¡µ±Ç°Ö¡Óë»Ø»·Ö¡µÄÏà¶ÔÎ»×Ërelative_q¡¢relative_t
+            //è·å–å½“å‰å¸§ä¸å›ç¯å¸§çš„ç›¸å¯¹ä½å§¿relative_qã€relative_t
             Vector3d relative_t;
             Quaterniond relative_q;
             relative_t = cur_kf->getLoopRelativeT();
             relative_q = (cur_kf->getLoopRelativeQ()).toRotationMatrix();
 
-            //ÖØĞÂ¼ÆËãµ±Ç°Ö¡Î»×Ëw_P_cur¡¢w_R_cur
+            //é‡æ–°è®¡ç®—å½“å‰å¸§ä½å§¿w_P_curã€w_R_cur
             w_P_cur = w_R_old * relative_t + w_P_old;
             w_R_cur = w_R_old * relative_q;
             
-            //»Ø»·µÃµ½µÄÎ»×ËºÍVIOÎ»×ËÖ®¼äµÄÆ«ÒÆÁ¿shift_r¡¢shift_t
+            //å›ç¯å¾—åˆ°çš„ä½å§¿å’ŒVIOä½å§¿ä¹‹é—´çš„åç§»é‡shift_rã€shift_t
             double shift_yaw;
             Matrix3d shift_r;
             Vector3d shift_t; 
@@ -124,7 +124,7 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
             shift_t = w_P_cur - w_R_cur * vio_R_cur.transpose() * vio_P_cur; 
             
             // shift vio pose of whole sequence to the world frame
-            //½«ËùÓĞÍ¼ÏñĞòÁĞ¶¼ºÏ²¢µ½ÊÀ½ç×ø±êÏµÏÂ
+            //å°†æ‰€æœ‰å›¾åƒåºåˆ—éƒ½åˆå¹¶åˆ°ä¸–ç•Œåæ ‡ç³»ä¸‹
             if (old_kf->sequence != cur_kf->sequence && sequence_loop[cur_kf->sequence] == 0)
             {  
                 w_r_vio = shift_r;
@@ -148,7 +148,7 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
                 sequence_loop[cur_kf->sequence] = 1;
             }
 
-            //½«µ±Ç°Ö¡·ÅÈëÓÅ»¯¶ÓÁĞÖĞ
+            //å°†å½“å‰å¸§æ”¾å…¥ä¼˜åŒ–é˜Ÿåˆ—ä¸­
             m_optimize_buf.lock();
             optimize_buf.push(cur_kf->index);
             m_optimize_buf.unlock();
@@ -160,14 +160,14 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
     Vector3d P;
     Matrix3d R;
 
-    //»ñÈ¡VIOµ±Ç°Ö¡µÄÎ»×ËP¡¢R£¬¸ù¾İÆ«ÒÆÁ¿µÃµ½Êµ¼ÊÎ»×Ë
+    //è·å–VIOå½“å‰å¸§çš„ä½å§¿Pã€Rï¼Œæ ¹æ®åç§»é‡å¾—åˆ°å®é™…ä½å§¿
     cur_kf->getVioPose(P, R);
     P = r_drift * P + t_drift;
     R = r_drift * R;
-    //¸üĞÂµ±Ç°Ö¡µÄÎ»×ËP¡¢R
+    //æ›´æ–°å½“å‰å¸§çš„ä½å§¿Pã€R
     cur_kf->updatePose(P, R);
 
-    //·¢²¼path[sequence_cnt]
+    //å‘å¸ƒpath[sequence_cnt]
     Quaterniond Q{R};
     geometry_msgs::PoseStamped pose_stamped;
     pose_stamped.header.stamp = ros::Time(cur_kf->time_stamp);
@@ -182,7 +182,7 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
     path[sequence_cnt].poses.push_back(pose_stamped);
     path[sequence_cnt].header = pose_stamped.header;
 
-    //±£´æ±Õ»·¹ì¼£µ½VINS_RESULT_PATH
+    //ä¿å­˜é—­ç¯è½¨è¿¹åˆ°VINS_RESULT_PATH
     if (SAVE_LOOP_PATH)
     {
         ofstream loop_path_file(VINS_RESULT_PATH, ios::app);
@@ -219,7 +219,7 @@ void PoseGraph::addKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
             rit++;
         }
     }
-    //µ±Ç°Ö¡ÓëÆä»Ø»·Ö¡Á¬Ïß
+    //å½“å‰å¸§ä¸å…¶å›ç¯å¸§è¿çº¿
     if (SHOW_L_EDGE)
     {
         if (cur_kf->has_loop)
@@ -323,7 +323,7 @@ void PoseGraph::loadKeyFrame(KeyFrame* cur_kf, bool flag_detect_loop)
     m_keyframelist.unlock();
 }
 
-//·µ»ØË÷ÒıÎªindexµÄ¹Ø¼üÖ¡
+//è¿”å›ç´¢å¼•ä¸ºindexçš„å…³é”®å¸§
 KeyFrame* PoseGraph::getKeyFrame(int index)
 {
 //    unique_lock<mutex> lock(m_keyframelist);
@@ -339,7 +339,7 @@ KeyFrame* PoseGraph::getKeyFrame(int index)
         return NULL;
 }
 
-//»Ø»·¼ì²â
+//å›ç¯æ£€æµ‹
 int PoseGraph::detectLoop(KeyFrame* keyframe, int frame_index)
 {
     // put image into image_pool; for visualization
@@ -356,12 +356,12 @@ int PoseGraph::detectLoop(KeyFrame* keyframe, int frame_index)
     QueryResults ret;
     TicToc t_query;
 
-    //²éÑ¯×ÖµäÊı¾İ¿â£¬µÃµ½ÓëÃ¿Ò»Ö¡µÄÏàËÆ¶ÈÆÀ·Öret
+    //æŸ¥è¯¢å­—å…¸æ•°æ®åº“ï¼Œå¾—åˆ°ä¸æ¯ä¸€å¸§çš„ç›¸ä¼¼åº¦è¯„åˆ†ret
     db.query(keyframe->brief_descriptors, ret, 4, frame_index - 50);
     //printf("query time: %f", t_query.toc());
     //cout << "Searching for Image " << frame_index << ". " << ret << endl;
 
-    //Ìí¼Óµ±Ç°¹Ø¼üÖ¡µ½×ÖµäÊı¾İ¿âÖĞ
+    //æ·»åŠ å½“å‰å…³é”®å¸§åˆ°å­—å…¸æ•°æ®åº“ä¸­
     TicToc t_add;
     db.add(keyframe->brief_descriptors);
     //printf("add feature time: %f", t_add.toc());
@@ -390,12 +390,12 @@ int PoseGraph::detectLoop(KeyFrame* keyframe, int frame_index)
         }
     }
 
-    //È·±£ÓëÏàÁÚÖ¡¾ßÓĞºÃµÄÏàËÆ¶ÈÆÀ·Ö
+    //ç¡®ä¿ä¸ç›¸é‚»å¸§å…·æœ‰å¥½çš„ç›¸ä¼¼åº¦è¯„åˆ†
     if (ret.size() >= 1 &&ret[0].Score > 0.05)
         for (unsigned int i = 1; i < ret.size(); i++)
         {
             //if (ret[i].Score > ret[0].Score * 0.3)
-            //ÆÀ·Ö´óÓÚ0.015ÔòÈÏÎªÊÇ»Ø»·ºòÑ¡Ö¡
+            //è¯„åˆ†å¤§äº0.015åˆ™è®¤ä¸ºæ˜¯å›ç¯å€™é€‰å¸§
             if (ret[i].Score > 0.015)
             {          
                 find_loop = true;
@@ -417,8 +417,8 @@ int PoseGraph::detectLoop(KeyFrame* keyframe, int frame_index)
         cv::waitKey(20);
     }
 */
-    //¶ÔÓÚË÷ÒıÖµ´óÓÚ50µÄ¹Ø¼üÖ¡²Å¿¼ÂÇ½øĞĞ»Ø»·
-    //·µ»ØÆÀ·Ö´óÓÚ0.015µÄ×îÔçµÄ¹Ø¼üÖ¡Ë÷Òımin_index
+    //å¯¹äºç´¢å¼•å€¼å¤§äº50çš„å…³é”®å¸§æ‰è€ƒè™‘è¿›è¡Œå›ç¯
+    //è¿”å›è¯„åˆ†å¤§äº0.015çš„æœ€æ—©çš„å…³é”®å¸§ç´¢å¼•min_index
     if (find_loop && frame_index > 50)
     {
         int min_index = -1;
@@ -434,7 +434,7 @@ int PoseGraph::detectLoop(KeyFrame* keyframe, int frame_index)
 
 }
 
-//½«µ±Ç°Ö¡µÄÃèÊö×Ó´æÈë×ÖµäÊı¾İ¿â
+//å°†å½“å‰å¸§çš„æè¿°å­å­˜å…¥å­—å…¸æ•°æ®åº“
 void PoseGraph::addKeyFrameIntoVoc(KeyFrame* keyframe)
 {
     // put image into image_pool; for visualization
@@ -450,7 +450,7 @@ void PoseGraph::addKeyFrameIntoVoc(KeyFrame* keyframe)
     db.add(keyframe->brief_descriptors);
 }
 
-//ËÄ×ÔÓÉ¶ÈÎ»×ËÍ¼ÓÅ»¯
+//å››è‡ªç”±åº¦ä½å§¿å›¾ä¼˜åŒ–
 void PoseGraph::optimize4DoF()
 {
     while(true)
@@ -458,7 +458,7 @@ void PoseGraph::optimize4DoF()
         int cur_index = -1;
         int first_looped_index = -1;
 
-        //È¡³ö×îĞÂÒ»¸ö´ıÓÅ»¯Ö¡×÷Îªµ±Ç°Ö¡
+        //å–å‡ºæœ€æ–°ä¸€ä¸ªå¾…ä¼˜åŒ–å¸§ä½œä¸ºå½“å‰å¸§
         m_optimize_buf.lock();
         while(!optimize_buf.empty())
         {
@@ -502,7 +502,7 @@ void PoseGraph::optimize4DoF()
             int i = 0;
             for (it = keyframelist.begin(); it != keyframelist.end(); it++)
             {
-                //ÕÒµ½µÚÒ»¸ö»Ø»·ºòÑ¡Ö¡
+                //æ‰¾åˆ°ç¬¬ä¸€ä¸ªå›ç¯å€™é€‰å¸§
                 if ((*it)->index < first_looped_index)
                     continue;
                 (*it)->local_index = i;
@@ -634,7 +634,7 @@ void PoseGraph::optimize4DoF()
     }
 }
 
-//¸üĞÂ¹ì¼£²¢·¢²¼
+//æ›´æ–°è½¨è¿¹å¹¶å‘å¸ƒ
 void PoseGraph::updatePath()
 {
     m_keyframelist.lock();
@@ -682,7 +682,7 @@ void PoseGraph::updatePath()
             path[(*it)->sequence].header = pose_stamped.header;
         }
 
-        //±£´æ±Õ»·¹ì¼£µ½VINS_RESULT_PATH
+        //ä¿å­˜é—­ç¯è½¨è¿¹åˆ°VINS_RESULT_PATH
         if (SAVE_LOOP_PATH)
         {
             ofstream loop_path_file(VINS_RESULT_PATH, ios::app);
@@ -728,7 +728,7 @@ void PoseGraph::updatePath()
                 }
             } 
         }
-        //µ±Ç°Ö¡ÓëÆä»Ø»·Ö¡Á¬Ïß
+        //å½“å‰å¸§ä¸å…¶å›ç¯å¸§è¿çº¿
         if (SHOW_L_EDGE)
         {
             if ((*it)->has_loop && (*it)->sequence == sequence_cnt)
@@ -752,7 +752,7 @@ void PoseGraph::updatePath()
     m_keyframelist.unlock();
 }
 
-//±£´æÎ»×ËÍ¼µ½file_path
+//ä¿å­˜ä½å§¿å›¾åˆ°file_path
 void PoseGraph::savePoseGraph()
 {
     m_keyframelist.lock();
@@ -809,7 +809,7 @@ void PoseGraph::savePoseGraph()
     m_keyframelist.unlock();
 }
 
-//´Ófile_path¶ÁÈ¡Î»×ËÍ¼
+//ä»file_pathè¯»å–ä½å§¿å›¾
 void PoseGraph::loadPoseGraph()
 {
     TicToc tmp_t;
@@ -930,7 +930,7 @@ void PoseGraph::loadPoseGraph()
     base_sequence = 0;
 }
 
-//·¢²¼topic£ºpub_pg_path¡¢pub_path¡¢pub_base_path
+//å‘å¸ƒtopicï¼špub_pg_pathã€pub_pathã€pub_base_path
 void PoseGraph::publish()
 {
     for (int i = 1; i <= sequence_cnt; i++)
@@ -948,7 +948,7 @@ void PoseGraph::publish()
     //posegraph_visualization->publish_by(pub_pose_graph, path[sequence_cnt].header);
 }
 
-//¸üĞÂ¹Ø¼üÖ¡µÄ»Ø»·ĞÅÏ¢
+//æ›´æ–°å…³é”®å¸§çš„å›ç¯ä¿¡æ¯
 void PoseGraph::updateKeyFrameLoop(int index, Eigen::Matrix<double, 8, 1 > &_loop_info)
 {
     KeyFrame* kf = getKeyFrame(index);

@@ -17,7 +17,7 @@ using namespace Eigen;
 
 /**
 * @class FeaturePerFrame
-* @brief ÌØÕ÷Àà
+* @brief ç‰¹å¾ç±»
 * detailed 
 */
 class FeaturePerFrame
@@ -49,7 +49,7 @@ class FeaturePerFrame
 
 /**
 * @class FeaturePerId
-* @brief Ä³feature_idÏÂµÄËùÓĞFeaturePerFrame
+* @brief æŸfeature_idä¸‹çš„æ‰€æœ‰FeaturePerFrame
 * detailed 
 */
 class FeaturePerId
@@ -67,7 +67,7 @@ class FeaturePerId
 
     Vector3d gt_p;
 
-    FeaturePerId(int _feature_id, int _start_frame)  //ÒÔfeature_idÎªË÷Òı£¬²¢±£´æÁË³öÏÖ¸Ã½ÇµãµÄµÚÒ»Ö¡µÄid
+    FeaturePerId(int _feature_id, int _start_frame)  //ä»¥feature_idä¸ºç´¢å¼•ï¼Œå¹¶ä¿å­˜äº†å‡ºç°è¯¥è§’ç‚¹çš„ç¬¬ä¸€å¸§çš„id
         : feature_id(_feature_id), start_frame(_start_frame),
           used_num(0), estimated_depth(-1.0), solve_flag(0)
     {
@@ -101,7 +101,7 @@ class FeatureManager
     void removeBack();
     void removeFront(int frame_count);
     void removeOutlier();
-    list<FeaturePerId> feature;// Í¨¹ıFeatureManager¿ÉÒÔµÃµ½»¬¶¯´°¿ÚÄÚËùÓĞµÄ½ÇµãĞÅÏ¢
+    list<FeaturePerId> feature;// é€šè¿‡FeatureManagerå¯ä»¥å¾—åˆ°æ»‘åŠ¨çª—å£å†…æ‰€æœ‰çš„è§’ç‚¹ä¿¡æ¯
     int last_track_num;
 
   private:

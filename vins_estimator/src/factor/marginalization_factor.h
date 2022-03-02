@@ -21,12 +21,12 @@ struct ResidualBlockInfo
 
     ceres::CostFunction *cost_function;
     ceres::LossFunction *loss_function;
-    std::vector<double *> parameter_blocks;//ÓÅ»¯±äÁ¿Êı¾İ
-    std::vector<int> drop_set;//´ı±ßÔµ»¯µÄÓÅ»¯±äÁ¿id
+    std::vector<double *> parameter_blocks;//ä¼˜åŒ–å˜é‡æ•°æ®
+    std::vector<int> drop_set;//å¾…è¾¹ç¼˜åŒ–çš„ä¼˜åŒ–å˜é‡id
 
     double **raw_jacobians;
     std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> jacobians;
-    Eigen::VectorXd residuals;//²Ğ²î IMU:15X1 ÊÓ¾õ2X1
+    Eigen::VectorXd residuals;//æ®‹å·® IMU:15X1 è§†è§‰2X1
 
     int localSize(int size)
     {
@@ -54,12 +54,12 @@ class MarginalizationInfo
     void marginalize();
     std::vector<double *> getParameterBlocks(std::unordered_map<long, double *> &addr_shift);
 
-    std::vector<ResidualBlockInfo *> factors;//ËùÓĞ¹Û²âÏî
-    int m, n;//mÎªÒª±ßÔµ»¯µÄ±äÁ¿¸öÊı£¬nÎªÒª±£ÁôÏÂÀ´µÄ±äÁ¿¸öÊı
-    std::unordered_map<long, int> parameter_block_size; //<ÓÅ»¯±äÁ¿ÄÚ´æµØÖ·,localSize>
+    std::vector<ResidualBlockInfo *> factors;//æ‰€æœ‰è§‚æµ‹é¡¹
+    int m, n;//mä¸ºè¦è¾¹ç¼˜åŒ–çš„å˜é‡ä¸ªæ•°ï¼Œnä¸ºè¦ä¿ç•™ä¸‹æ¥çš„å˜é‡ä¸ªæ•°
+    std::unordered_map<long, int> parameter_block_size; //<ä¼˜åŒ–å˜é‡å†…å­˜åœ°å€,localSize>
     int sum_block_size;
-    std::unordered_map<long, int> parameter_block_idx; //<´ı±ßÔµ»¯µÄÓÅ»¯±äÁ¿ÄÚ´æµØÖ·,ÔÚparameter_block_sizeÖĞµÄid>
-    std::unordered_map<long, double *> parameter_block_data;//<ÓÅ»¯±äÁ¿ÄÚ´æµØÖ·,Êı¾İ>
+    std::unordered_map<long, int> parameter_block_idx; //<å¾…è¾¹ç¼˜åŒ–çš„ä¼˜åŒ–å˜é‡å†…å­˜åœ°å€,åœ¨parameter_block_sizeä¸­çš„id>
+    std::unordered_map<long, double *> parameter_block_data;//<ä¼˜åŒ–å˜é‡å†…å­˜åœ°å€,æ•°æ®>
 
     std::vector<int> keep_block_size; //global size
     std::vector<int> keep_block_idx;  //local size

@@ -23,8 +23,8 @@
 #include <opencv2/core/eigen.hpp>
 
 /**
-* @class Estimator ×´Ì¬¹À¼ÆÆ÷
-* @Description IMUÔ¤»ı·Ö£¬Í¼ÏñIMUÈÚºÏµÄ³õÊ¼»¯ºÍ×´Ì¬¹À¼Æ£¬ÖØ¶¨Î»
+* @class Estimator çŠ¶æ€ä¼°è®¡å™¨
+* @Description IMUé¢„ç§¯åˆ†ï¼Œå›¾åƒIMUèåˆçš„åˆå§‹åŒ–å’ŒçŠ¶æ€ä¼°è®¡ï¼Œé‡å®šä½
 * detailed 
 */
 class Estimator
@@ -75,7 +75,7 @@ class Estimator
     Matrix3d ric[NUM_OF_CAM];
     Vector3d tic[NUM_OF_CAM];
 
-    //´°¿ÚÖĞµÄ[P,V,R,Ba,Bg]
+    //çª—å£ä¸­çš„[P,V,R,Ba,Bg]
     Vector3d Ps[(WINDOW_SIZE + 1)];
     Vector3d Vs[(WINDOW_SIZE + 1)];
     Matrix3d Rs[(WINDOW_SIZE + 1)];
@@ -90,7 +90,7 @@ class Estimator
     IntegrationBase *pre_integrations[(WINDOW_SIZE + 1)];
     Vector3d acc_0, gyr_0;
 
-    //´°¿ÚÖĞµÄdt,a,v
+    //çª—å£ä¸­çš„dt,a,v
     vector<double> dt_buf[(WINDOW_SIZE + 1)];
     vector<Vector3d> linear_acceleration_buf[(WINDOW_SIZE + 1)];
     vector<Vector3d> angular_velocity_buf[(WINDOW_SIZE + 1)];
@@ -125,12 +125,12 @@ class Estimator
     MarginalizationInfo *last_marginalization_info;
     vector<double *> last_marginalization_parameter_blocks;
 
-    //kayÊÇÊ±¼ä´Á£¬valÊÇÍ¼ÏñÖ¡
-    //Í¼ÏñÖ¡ÖĞ±£´æÁËÍ¼ÏñÖ¡µÄÌØÕ÷µã¡¢Ê±¼ä´Á¡¢Î»×ËRt£¬Ô¤»ı·Ö¶ÔÏópre_integration£¬ÊÇ·ñÊÇ¹Ø¼üÖ¡¡£
+    //kayæ˜¯æ—¶é—´æˆ³ï¼Œvalæ˜¯å›¾åƒå¸§
+    //å›¾åƒå¸§ä¸­ä¿å­˜äº†å›¾åƒå¸§çš„ç‰¹å¾ç‚¹ã€æ—¶é—´æˆ³ã€ä½å§¿Rtï¼Œé¢„ç§¯åˆ†å¯¹è±¡pre_integrationï¼Œæ˜¯å¦æ˜¯å…³é”®å¸§ã€‚
     map<double, ImageFrame> all_image_frame;
     IntegrationBase *tmp_pre_integration;
 
-    //ÖØ¶¨Î»ËùĞèµÄ±äÁ¿
+    //é‡å®šä½æ‰€éœ€çš„å˜é‡
     bool relocalization_info;
     double relo_frame_stamp;
     double relo_frame_index;

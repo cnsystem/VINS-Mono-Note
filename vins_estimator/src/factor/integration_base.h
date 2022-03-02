@@ -8,7 +8,7 @@ using namespace Eigen;
 
 
 /**
-* @class IntegrationBase IMUÔ¤»ı·ÖÀà
+* @class IntegrationBase IMUé¢„ç§¯åˆ†ç±»
 * @Description 
 */
 class IntegrationBase
@@ -40,7 +40,7 @@ class IntegrationBase
         propagate(dt, acc, gyr);
     }
 
-    //ÓÅ»¯¹ı³ÌÖĞBias»á¸üĞÂ£¬ĞèÒª¸ù¾İĞÂµÄbiasÖØĞÂ¼ÆËãÔ¤»ı·Ö
+    //ä¼˜åŒ–è¿‡ç¨‹ä¸­Biasä¼šæ›´æ–°ï¼Œéœ€è¦æ ¹æ®æ–°çš„biasé‡æ–°è®¡ç®—é¢„ç§¯åˆ†
     void repropagate(const Eigen::Vector3d &_linearized_ba, const Eigen::Vector3d &_linearized_bg)
     {
         sum_dt = 0.0;
@@ -58,8 +58,8 @@ class IntegrationBase
     }
 
     /**
-    * @brief   IMUÔ¤»ı·ÖÖĞ²ÉÓÃÖĞÖµ»ı·ÖµİÍÆJacobianºÍCovariance
-    *          ¹¹ÔìÎó²îµÄÏßĞÔ»¯µİÍÆ·½³Ì£¬µÃµ½JacobianºÍCovarianceµİÍÆ¹«Ê½-> Paper Ê½9¡¢10¡¢11
+    * @brief   IMUé¢„ç§¯åˆ†ä¸­é‡‡ç”¨ä¸­å€¼ç§¯åˆ†é€’æ¨Jacobianå’ŒCovariance
+    *          æ„é€ è¯¯å·®çš„çº¿æ€§åŒ–é€’æ¨æ–¹ç¨‹ï¼Œå¾—åˆ°Jacobianå’ŒCovarianceé€’æ¨å…¬å¼-> Paper å¼9ã€10ã€11
     * @return  void
     */
     void midPointIntegration(double _dt, 
@@ -88,7 +88,7 @@ class IntegrationBase
             Vector3d a_1_x = _acc_1 - linearized_ba;
             Matrix3d R_w_x, R_a_0_x, R_a_1_x;
 
-            //·´¶Ô³Æ¾ØÕó
+            //åå¯¹ç§°çŸ©é˜µ
             R_w_x<<0, -w_x(2), w_x(1),
                 w_x(2), 0, -w_x(0),
                 -w_x(1), w_x(0), 0;
@@ -141,14 +141,14 @@ class IntegrationBase
     
 
     /**
-    * @brief   IMUÔ¤»ı·Ö´«²¥·½³Ì
-    * @Description  »ı·Ö¼ÆËãÁ½¸ö¹Ø¼üÖ¡Ö®¼äIMU²âÁ¿µÄ±ä»¯Á¿£º 
-    *               Ğı×ªdelta_q ËÙ¶Èdelta_v Î»ÒÆdelta_p
-    *               ¼ÓËÙ¶ÈµÄbiaslinearized_ba ÍÓÂİÒÇµÄBias linearized_bg
-    *               Í¬Ê±Î¬»¤¸üĞÂÔ¤»ı·ÖµÄJacobianºÍCovariance,¼ÆËãÓÅ»¯Ê±±ØÒªµÄ²ÎÊı
-    * @param[in]   _dt Ê±¼ä¼ä¸ô
-    * @param[in]   _acc_1 Ïß¼ÓËÙ¶È
-    * @param[in]   _gyr_1 ½ÇËÙ¶È
+    * @brief   IMUé¢„ç§¯åˆ†ä¼ æ’­æ–¹ç¨‹
+    * @Description  ç§¯åˆ†è®¡ç®—ä¸¤ä¸ªå…³é”®å¸§ä¹‹é—´IMUæµ‹é‡çš„å˜åŒ–é‡ï¼š 
+    *               æ—‹è½¬delta_q é€Ÿåº¦delta_v ä½ç§»delta_p
+    *               åŠ é€Ÿåº¦çš„biaslinearized_ba é™€èºä»ªçš„Bias linearized_bg
+    *               åŒæ—¶ç»´æŠ¤æ›´æ–°é¢„ç§¯åˆ†çš„Jacobianå’ŒCovariance,è®¡ç®—ä¼˜åŒ–æ—¶å¿…è¦çš„å‚æ•°
+    * @param[in]   _dt æ—¶é—´é—´éš”
+    * @param[in]   _acc_1 çº¿åŠ é€Ÿåº¦
+    * @param[in]   _gyr_1 è§’é€Ÿåº¦
     * @return  void
     */
     void propagate(double _dt, const Eigen::Vector3d &_acc_1, const Eigen::Vector3d &_gyr_1)
@@ -222,7 +222,7 @@ class IntegrationBase
     Eigen::Matrix<double, 18, 18> noise;
 
     double sum_dt;
-    //Ô¤»ı·ÖÖµ
+    //é¢„ç§¯åˆ†å€¼
     Eigen::Vector3d delta_p;
     Eigen::Quaterniond delta_q;
     Eigen::Vector3d delta_v;

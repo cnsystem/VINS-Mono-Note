@@ -16,8 +16,8 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
     IMUFactor(IntegrationBase* _pre_integration):pre_integration(_pre_integration)
     {
     }
-    // IMU¶ÔÓ¦µÄ²Ğ²î£¬ĞèÒª×Ô¼º¼ÆËãjacobian
-    // parameters[0~3]·Ö±ğ¶ÔÓ¦ÁË4×éÓÅ»¯±äÁ¿µÄ²ÎÊı¿é
+    // IMUå¯¹åº”çš„æ®‹å·®ï¼Œéœ€è¦è‡ªå·±è®¡ç®—jacobian
+    // parameters[0~3]åˆ†åˆ«å¯¹åº”äº†4ç»„ä¼˜åŒ–å˜é‡çš„å‚æ•°å—
     virtual bool Evaluate(double const *const *parameters, double *residuals, double **jacobians) const
     {
 
@@ -58,20 +58,20 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
             pre_integration->repropagate(Bai, Bgi);
         }
 #endif
-        // ¹¹½¨IMU²Ğ²îresidual
+        // æ„å»ºIMUæ®‹å·®residual
         Eigen::Map<Eigen::Matrix<double, 15, 1>> residual(residuals);
         residual = pre_integration->evaluate(Pi, Qi, Vi, Bai, Bgi,
                                             Pj, Qj, Vj, Baj, Bgj);
 
-        // LLT·Ö½â£¬residual »¹Ğè³ËÒÔĞÅÏ¢¾ØÕóµÄsqrt_info
-        // ÒòÎªÓÅ»¯º¯ÊıÆäÊµÊÇd=r^T P^-1 r £¬P±íÊ¾Ğ­·½²î£¬¶øceresÖ»½ÓÊÜ×îĞ¡¶ş³ËÓÅ»¯
-        // Òò´ËĞèÒª°ÑP^-1×öLLT·Ö½â£¬Ê¹d=(L^T r)^T (L^T r) = r'^T r
+        // LLTåˆ†è§£ï¼Œresidual è¿˜éœ€ä¹˜ä»¥ä¿¡æ¯çŸ©é˜µçš„sqrt_info
+        // å› ä¸ºä¼˜åŒ–å‡½æ•°å…¶å®æ˜¯d=r^T P^-1 r ï¼ŒPè¡¨ç¤ºåæ–¹å·®ï¼Œè€Œceresåªæ¥å—æœ€å°äºŒä¹˜ä¼˜åŒ–
+        // å› æ­¤éœ€è¦æŠŠP^-1åšLLTåˆ†è§£ï¼Œä½¿d=(L^T r)^T (L^T r) = r'^T r
         Eigen::Matrix<double, 15, 15> sqrt_info = Eigen::LLT<Eigen::Matrix<double, 15, 15>>(pre_integration->covariance.inverse()).matrixL().transpose();
         residual = sqrt_info * residual;
 
         if (jacobians)
         {
-            // »ñÈ¡Ô¤»ı·ÖµÄÎó²îµİÍÆº¯ÊıÖĞpqv¹ØÓÚba¡¢bgµÄJacobian
+            // è·å–é¢„ç§¯åˆ†çš„è¯¯å·®é€’æ¨å‡½æ•°ä¸­pqvå…³äºbaã€bgçš„Jacobian
             double sum_dt = pre_integration->sum_dt;
             Eigen::Matrix3d dp_dba = pre_integration->jacobian.template block<3, 3>(O_P, O_BA);
             Eigen::Matrix3d dp_dbg = pre_integration->jacobian.template block<3, 3>(O_P, O_BG);
@@ -88,7 +88,7 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
 ///                ROS_BREAK();
             }
 
-            // µÚiÖ¡µÄIMUÎ»×Ë pbi¡¢qbi
+            // ç¬¬iå¸§çš„IMUä½å§¿ pbiã€qbi
             if (jacobians[0])
             {
                 Eigen::Map<Eigen::Matrix<double, 15, 7, Eigen::RowMajor>> jacobian_pose_i(jacobians[0]);
@@ -115,7 +115,7 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
                     //ROS_BREAK();
                 }
             }
-            // µÚiÖ¡µÄimuËÙ¶Èvbi¡¢bai¡¢bgi
+            // ç¬¬iå¸§çš„imué€Ÿåº¦vbiã€baiã€bgi
             if (jacobians[1])
             {
                 Eigen::Map<Eigen::Matrix<double, 15, 9, Eigen::RowMajor>> jacobian_speedbias_i(jacobians[1]);
@@ -145,7 +145,7 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
                 //ROS_ASSERT(fabs(jacobian_speedbias_i.maxCoeff()) < 1e8);
                 //ROS_ASSERT(fabs(jacobian_speedbias_i.minCoeff()) < 1e8);
             }
-            // µÚjÖ¡µÄIMUÎ»×Ë pbj¡¢qbj
+            // ç¬¬jå¸§çš„IMUä½å§¿ pbjã€qbj
             if (jacobians[2])
             {
                 Eigen::Map<Eigen::Matrix<double, 15, 7, Eigen::RowMajor>> jacobian_pose_j(jacobians[2]);
@@ -165,7 +165,7 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
                 //ROS_ASSERT(fabs(jacobian_pose_j.maxCoeff()) < 1e8);
                 //ROS_ASSERT(fabs(jacobian_pose_j.minCoeff()) < 1e8);
             }
-            // µÚjÖ¡µÄIMUËÙ¶Èvbj¡¢baj¡¢bgj
+            // ç¬¬jå¸§çš„IMUé€Ÿåº¦vbjã€bajã€bgj
             if (jacobians[3])
             {
                 Eigen::Map<Eigen::Matrix<double, 15, 9, Eigen::RowMajor>> jacobian_speedbias_j(jacobians[3]);
