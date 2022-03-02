@@ -12,14 +12,13 @@ using namespace Eigen;
 using namespace std;
 
 
-
 struct SFMFeature
 {
-    bool state;
-    int id;
-    vector<pair<int,Vector2d>> observation;
-    double position[3];
-    double depth;
+    bool state;//特征点的状态（是否被三角化）
+    int id;//
+    vector<pair<int,Vector2d>> observation;//所有观测到该特征点的图像帧ID和图像坐标
+    double position[3];//3d坐标
+    double depth;//深度
 };
 
 struct ReprojectionError3D
@@ -57,6 +56,7 @@ class GlobalSFM
 {
 public:
 	GlobalSFM();
+	
 	bool construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 			  const Matrix3d relative_R, const Vector3d relative_T,
 			  vector<SFMFeature> &sfm_f, map<int, Vector3d> &sfm_tracked_points);

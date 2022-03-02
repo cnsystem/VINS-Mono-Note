@@ -16,6 +16,8 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
     IMUFactor(IntegrationBase* _pre_integration):pre_integration(_pre_integration)
     {
     }
+    // IMU对应的残差，需要自己计算jacobian
+    // parameters[0~3]分别对应了4组优化变量的参数块
     virtual bool Evaluate(double const *const *parameters, double *residuals, double **jacobians) const
     {
 
@@ -56,17 +58,20 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
             pre_integration->repropagate(Bai, Bgi);
         }
 #endif
-
+        // 构建IMU残差residual
         Eigen::Map<Eigen::Matrix<double, 15, 1>> residual(residuals);
         residual = pre_integration->evaluate(Pi, Qi, Vi, Bai, Bgi,
                                             Pj, Qj, Vj, Baj, Bgj);
 
+        // LLT分解，residual 还需乘以信息矩阵的sqrt_info
+        // 因为优化函数其实是d=r^T P^-1 r ，P表示协方差，而ceres只接受最小二乘优化
+        // 因此需要把P^-1做LLT分解，使d=(L^T r)^T (L^T r) = r'^T r
         Eigen::Matrix<double, 15, 15> sqrt_info = Eigen::LLT<Eigen::Matrix<double, 15, 15>>(pre_integration->covariance.inverse()).matrixL().transpose();
-        //sqrt_info.setIdentity();
         residual = sqrt_info * residual;
 
         if (jacobians)
         {
+            // 获取预积分的误差递推函数中pqv关于ba、bg的Jacobian
             double sum_dt = pre_integration->sum_dt;
             Eigen::Matrix3d dp_dba = pre_integration->jacobian.template block<3, 3>(O_P, O_BA);
             Eigen::Matrix3d dp_dbg = pre_integration->jacobian.template block<3, 3>(O_P, O_BG);
@@ -83,6 +88,7 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
 ///                ROS_BREAK();
             }
 
+            // 第i帧的IMU位姿 pbi、qbi
             if (jacobians[0])
             {
                 Eigen::Map<Eigen::Matrix<double, 15, 7, Eigen::RowMajor>> jacobian_pose_i(jacobians[0]);
@@ -109,6 +115,7 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
                     //ROS_BREAK();
                 }
             }
+            // 第i帧的imu速度vbi、bai、bgi
             if (jacobians[1])
             {
                 Eigen::Map<Eigen::Matrix<double, 15, 9, Eigen::RowMajor>> jacobian_speedbias_i(jacobians[1]);
@@ -138,6 +145,7 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
                 //ROS_ASSERT(fabs(jacobian_speedbias_i.maxCoeff()) < 1e8);
                 //ROS_ASSERT(fabs(jacobian_speedbias_i.minCoeff()) < 1e8);
             }
+            // 第j帧的IMU位姿 pbj、qbj
             if (jacobians[2])
             {
                 Eigen::Map<Eigen::Matrix<double, 15, 7, Eigen::RowMajor>> jacobian_pose_j(jacobians[2]);
@@ -157,6 +165,7 @@ class IMUFactor : public ceres::SizedCostFunction<15, 7, 9, 7, 9>
                 //ROS_ASSERT(fabs(jacobian_pose_j.maxCoeff()) < 1e8);
                 //ROS_ASSERT(fabs(jacobian_pose_j.minCoeff()) < 1e8);
             }
+            // 第j帧的IMU速度vbj、baj、bgj
             if (jacobians[3])
             {
                 Eigen::Map<Eigen::Matrix<double, 15, 9, Eigen::RowMajor>> jacobian_speedbias_j(jacobians[3]);

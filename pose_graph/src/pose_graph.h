@@ -32,6 +32,10 @@
 using namespace DVision;
 using namespace DBoW2;
 
+/**
+* @class PoseGraph
+* @Description 构建位姿图
+*/
 class PoseGraph
 {
 public:
@@ -49,10 +53,13 @@ public:
 	void savePoseGraph();
 	void loadPoseGraph();
 	void publish();
+
+	// vio ----> cur(闭环后的)
 	Vector3d t_drift;
 	double yaw_drift;
 	Matrix3d r_drift;
-	// world frame( base sequence or first sequence)<----> cur sequence frame  
+
+	// cur sequence frame  ---->  world frame( base sequence or first sequence)
 	Vector3d w_t_vio;
 	Matrix3d w_r_vio;
 
@@ -134,6 +141,7 @@ void YawPitchRollToRotationMatrix(const T yaw, const T pitch, const T roll, T R[
 	R[8] = cos(p) * cos(r);
 };
 
+//对矩阵进行转置
 template <typename T> 
 void RotationMatrixTranspose(const T R[9], T inv_R[9])
 {

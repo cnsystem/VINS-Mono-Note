@@ -42,6 +42,7 @@ void registerPub(ros::NodeHandle &n)
     keyframebasevisual.setLineWidth(0.01);
 }
 
+
 void pubLatestOdometry(const Eigen::Vector3d &P, const Eigen::Quaterniond &Q, const Eigen::Vector3d &V, const std_msgs::Header &header)
 {
     Eigen::Quaterniond quadrotor_Q = Q ;
@@ -403,6 +404,7 @@ void pubKeyframe(const Estimator &estimator)
     }
 }
 
+//发布重定位帧的位姿信息
 void pubRelocalization(const Estimator &estimator)
 {
     nav_msgs::Odometry odometry;

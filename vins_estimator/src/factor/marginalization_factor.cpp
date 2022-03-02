@@ -86,6 +86,7 @@ MarginalizationInfo::~MarginalizationInfo()
     }
 }
 
+//添加残差块相关信息（优化变量，待边缘化变量）
 void MarginalizationInfo::addResidualBlockInfo(ResidualBlockInfo *residual_block_info)
 {
     factors.emplace_back(residual_block_info);
@@ -107,6 +108,7 @@ void MarginalizationInfo::addResidualBlockInfo(ResidualBlockInfo *residual_block
     }
 }
 
+//计算每个残差，对应的Jacobian，并更新parameter_block_data
 void MarginalizationInfo::preMarginalize()
 {
     for (auto it : factors)
@@ -171,6 +173,7 @@ void* ThreadsConstructA(void* threadsstruct)
     return threadsstruct;
 }
 
+//多线程构造先验项舒尔补AX=b的结构，计算Jacobian和残差
 void MarginalizationInfo::marginalize()
 {
     int pos = 0;
@@ -272,6 +275,7 @@ void MarginalizationInfo::marginalize()
     Eigen::MatrixXd Amm_inv = saes.eigenvectors() * Eigen::VectorXd((saes.eigenvalues().array() > eps).select(saes.eigenvalues().array().inverse(), 0)).asDiagonal() * saes.eigenvectors().transpose();
     //printf("error1: %f\n", (Amm * Amm_inv - Eigen::MatrixXd::Identity(m, m)).sum());
 
+    //舒尔补
     Eigen::VectorXd bmm = b.segment(0, m);
     Eigen::MatrixXd Amr = A.block(0, m, m, n);
     Eigen::MatrixXd Arm = A.block(m, 0, n, m);

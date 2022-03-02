@@ -6,6 +6,11 @@
 #include <ceres/ceres.h>
 using namespace Eigen;
 
+
+/**
+* @class IntegrationBase IMU预积分类
+* @Description 
+*/
 class IntegrationBase
 {
   public:
@@ -35,6 +40,7 @@ class IntegrationBase
         propagate(dt, acc, gyr);
     }
 
+    //优化过程中Bias会更新，需要根据新的bias重新计算预积分
     void repropagate(const Eigen::Vector3d &_linearized_ba, const Eigen::Vector3d &_linearized_bg)
     {
         sum_dt = 0.0;
@@ -51,6 +57,11 @@ class IntegrationBase
             propagate(dt_buf[i], acc_buf[i], gyr_buf[i]);
     }
 
+    /**
+    * @brief   IMU预积分中采用中值积分递推Jacobian和Covariance
+    *          构造误差的线性化递推方程，得到Jacobian和Covariance递推公式-> Paper 式9、10、11
+    * @return  void
+    */
     void midPointIntegration(double _dt, 
                             const Eigen::Vector3d &_acc_0, const Eigen::Vector3d &_gyr_0,
                             const Eigen::Vector3d &_acc_1, const Eigen::Vector3d &_gyr_1,
@@ -77,6 +88,7 @@ class IntegrationBase
             Vector3d a_1_x = _acc_1 - linearized_ba;
             Matrix3d R_w_x, R_a_0_x, R_a_1_x;
 
+            //反对称矩阵
             R_w_x<<0, -w_x(2), w_x(1),
                 w_x(2), 0, -w_x(0),
                 -w_x(1), w_x(0), 0;
@@ -126,7 +138,19 @@ class IntegrationBase
         }
 
     }
+    
 
+    /**
+    * @brief   IMU预积分传播方程
+    * @Description  积分计算两个关键帧之间IMU测量的变化量： 
+    *               旋转delta_q 速度delta_v 位移delta_p
+    *               加速度的biaslinearized_ba 陀螺仪的Bias linearized_bg
+    *               同时维护更新预积分的Jacobian和Covariance,计算优化时必要的参数
+    * @param[in]   _dt 时间间隔
+    * @param[in]   _acc_1 线加速度
+    * @param[in]   _gyr_1 角速度
+    * @return  void
+    */
     void propagate(double _dt, const Eigen::Vector3d &_acc_1, const Eigen::Vector3d &_gyr_1)
     {
         dt = _dt;
@@ -198,6 +222,7 @@ class IntegrationBase
     Eigen::Matrix<double, 18, 18> noise;
 
     double sum_dt;
+    //预积分值
     Eigen::Vector3d delta_p;
     Eigen::Quaterniond delta_q;
     Eigen::Vector3d delta_v;

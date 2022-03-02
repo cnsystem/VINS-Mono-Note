@@ -21,12 +21,12 @@ struct ResidualBlockInfo
 
     ceres::CostFunction *cost_function;
     ceres::LossFunction *loss_function;
-    std::vector<double *> parameter_blocks;
-    std::vector<int> drop_set;
+    std::vector<double *> parameter_blocks;//优化变量数据
+    std::vector<int> drop_set;//待边缘化的优化变量id
 
     double **raw_jacobians;
     std::vector<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> jacobians;
-    Eigen::VectorXd residuals;
+    Eigen::VectorXd residuals;//残差 IMU:15X1 视觉2X1
 
     int localSize(int size)
     {
@@ -54,12 +54,12 @@ class MarginalizationInfo
     void marginalize();
     std::vector<double *> getParameterBlocks(std::unordered_map<long, double *> &addr_shift);
 
-    std::vector<ResidualBlockInfo *> factors;
-    int m, n;
-    std::unordered_map<long, int> parameter_block_size; //global size
+    std::vector<ResidualBlockInfo *> factors;//所有观测项
+    int m, n;//m为要边缘化的变量个数，n为要保留下来的变量个数
+    std::unordered_map<long, int> parameter_block_size; //<优化变量内存地址,localSize>
     int sum_block_size;
-    std::unordered_map<long, int> parameter_block_idx; //local size
-    std::unordered_map<long, double *> parameter_block_data;
+    std::unordered_map<long, int> parameter_block_idx; //<待边缘化的优化变量内存地址,在parameter_block_size中的id>
+    std::unordered_map<long, double *> parameter_block_data;//<优化变量内存地址,数据>
 
     std::vector<int> keep_block_size; //global size
     std::vector<int> keep_block_idx;  //local size
