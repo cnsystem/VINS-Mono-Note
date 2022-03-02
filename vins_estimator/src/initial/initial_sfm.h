@@ -14,11 +14,11 @@ using namespace std;
 
 struct SFMFeature
 {
-    bool state;//ÌØÕ÷µãµÄ×´Ì¬£¨ÊÇ·ñ±»Èı½Ç»¯£©
+    bool state;//ç‰¹å¾ç‚¹çš„çŠ¶æ€ï¼ˆæ˜¯å¦è¢«ä¸‰è§’åŒ–ï¼‰
     int id;//
-    vector<pair<int,Vector2d>> observation;//ËùÓĞ¹Û²âµ½¸ÃÌØÕ÷µãµÄÍ¼ÏñÖ¡IDºÍÍ¼Ïñ×ø±ê
-    double position[3];//3d×ø±ê
-    double depth;//Éî¶È
+    vector<pair<int,Vector2d>> observation;//æ‰€æœ‰è§‚æµ‹åˆ°è¯¥ç‰¹å¾ç‚¹çš„å›¾åƒå¸§IDå’Œå›¾åƒåæ ‡
+    double position[3];//3dåæ ‡
+    double depth;//æ·±åº¦
 };
 
 struct ReprojectionError3D

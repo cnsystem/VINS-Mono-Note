@@ -21,7 +21,7 @@ using namespace DVision;
 
 /**
 * @class BriefExtractor
-* @Description Í¨¹ıBriefÄ£°åÎÄ¼ş£¬¶ÔÍ¼ÏñµÄ¹Ø¼üµã¼ÆËãBriefÃèÊö×Ó
+* @Description é€šè¿‡Briefæ¨¡æ¿æ–‡ä»¶ï¼Œå¯¹å›¾åƒçš„å…³é”®ç‚¹è®¡ç®—Briefæè¿°å­
 */
 class BriefExtractor
 {
@@ -34,7 +34,7 @@ public:
 
 /**
 * @class KeyFrame
-* @Description ¹¹½¨¹Ø¼üÖ¡£¬Í¨¹ıBRIEFÃèÊö×ÓÆ¥Åä¹Ø¼üÖ¡ºÍ»Ø»·ºòÑ¡Ö¡
+* @Description æ„å»ºå…³é”®å¸§ï¼Œé€šè¿‡BRIEFæè¿°å­åŒ¹é…å…³é”®å¸§å’Œå›ç¯å€™é€‰å¸§
 */
 class KeyFrame
 {

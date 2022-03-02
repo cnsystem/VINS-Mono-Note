@@ -2,25 +2,25 @@
 #include <ros/ros.h>
 #include <opencv2/highgui/highgui.hpp>
 
-extern int ROW;//Í¼Ïñ¿í¶È
-extern int COL;//Í¼Ïñ¸ß¶È
-extern int FOCAL_LENGTH;//½¹¾à
-const int NUM_OF_CAM = 1;//Ïà»úµÄ¸öÊı
+extern int ROW;//å›¾åƒå®½åº¦
+extern int COL;//å›¾åƒé«˜åº¦
+extern int FOCAL_LENGTH;//ç„¦è·
+const int NUM_OF_CAM = 1;//ç›¸æœºçš„ä¸ªæ•°
 
 
-extern std::string IMAGE_TOPIC;//Í¼ÏñµÄROS TOPIC
-extern std::string IMU_TOPIC;//IMUµÄROS TOPIC
-extern std::string FISHEYE_MASK;//ÓãÑÛÏà»úmaskÍ¼µÄÎ»ÖÃ
-extern std::vector<std::string> CAM_NAMES;//Ïà»ú²ÎÊıÅäÖÃÎÄ¼şÃû
-extern int MAX_CNT;//ÌØÕ÷µã×î´ó¸öÊı
-extern int MIN_DIST;//ÌØÕ÷µãÖ®¼äµÄ×îĞ¡¼ä¸ô
+extern std::string IMAGE_TOPIC;//å›¾åƒçš„ROS TOPIC
+extern std::string IMU_TOPIC;//IMUçš„ROS TOPIC
+extern std::string FISHEYE_MASK;//é±¼çœ¼ç›¸æœºmaskå›¾çš„ä½ç½®
+extern std::vector<std::string> CAM_NAMES;//ç›¸æœºå‚æ•°é…ç½®æ–‡ä»¶å
+extern int MAX_CNT;//ç‰¹å¾ç‚¹æœ€å¤§ä¸ªæ•°
+extern int MIN_DIST;//ç‰¹å¾ç‚¹ä¹‹é—´çš„æœ€å°é—´éš”
 extern int WINDOW_SIZE;
-extern int FREQ;//¿ØÖÆÍ¼Ïñ¹âÁ÷¸ú×ÙµÄÆµÂÊ
-extern double F_THRESHOLD;//ransacËã·¨µÄÃÅÏŞ
-extern int SHOW_TRACK;//ÊÇ·ñ·¢²¼¸ú×ÙµãµÄÍ¼Ïñ
-extern int STEREO_TRACK;//Ë«Ä¿¸ú×ÙÔòÎª1
-extern int EQUALIZE;//Èç¹û¹âÌ«ÁÁ»òÌ«°µÔòÎª1£¬½øĞĞÖ±·½Í¼¾ùºâ»¯
-extern int FISHEYE;//Èç¹ûÊÇÓãÑÛÏà»úÔòÎª1
-extern bool PUB_THIS_FRAME;//ÊÇ·ñĞèÒª·¢²¼ÌØÕ÷µã
+extern int FREQ;//æ§åˆ¶å›¾åƒå…‰æµè·Ÿè¸ªçš„é¢‘ç‡
+extern double F_THRESHOLD;//ransacç®—æ³•çš„é—¨é™
+extern int SHOW_TRACK;//æ˜¯å¦å‘å¸ƒè·Ÿè¸ªç‚¹çš„å›¾åƒ
+extern int STEREO_TRACK;//åŒç›®è·Ÿè¸ªåˆ™ä¸º1
+extern int EQUALIZE;//å¦‚æœå…‰å¤ªäº®æˆ–å¤ªæš—åˆ™ä¸º1ï¼Œè¿›è¡Œç›´æ–¹å›¾å‡è¡¡åŒ–
+extern int FISHEYE;//å¦‚æœæ˜¯é±¼çœ¼ç›¸æœºåˆ™ä¸º1
+extern bool PUB_THIS_FRAME;//æ˜¯å¦éœ€è¦å‘å¸ƒç‰¹å¾ç‚¹
 
 void readParameters(ros::NodeHandle &n);

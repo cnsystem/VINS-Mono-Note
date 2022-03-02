@@ -190,14 +190,14 @@ namespace cv {
 }
 
 /**
- * @brief   Í¨¹ıÇó½â±¾ÖÊ¾ØÕóµÃµ½R,t
- * @Description findFundamentalMat()²ÉÓÃRANSACËã·¨Çó½â±¾ÖÊ¾ØÕóE
- *              recoverPose()Í¨¹ı±¾ÖÊ¾ØÕóµÃµ½Rt
-                ÇóRtµÄ¶Ô³Æ±ä»»£¬ÅĞ¶ÏÄÚµãÊı´óÓÚ12
- * @param[in]   corres  ¶ÔÓ¦ÌØÕ÷µã¶Ô
- * @param[out]  Rotation    µ±Ç°Ö¡µ½²Î¿¼Ö¡µÄĞı×ª¾ØÕó
- * @param[out]  Translation µ±Ç°Ö¡µ½²Î¿¼Ö¡µÄÆ½ÒÆÏòÁ¿
- * @return      bool    true:ÄÚµãÊı´óÓÚ12
+ * @brief   é€šè¿‡æ±‚è§£æœ¬è´¨çŸ©é˜µå¾—åˆ°R,t
+ * @Description findFundamentalMat()é‡‡ç”¨RANSACç®—æ³•æ±‚è§£æœ¬è´¨çŸ©é˜µE
+ *              recoverPose()é€šè¿‡æœ¬è´¨çŸ©é˜µå¾—åˆ°Rt
+                æ±‚Rtçš„å¯¹ç§°å˜æ¢ï¼Œåˆ¤æ–­å†…ç‚¹æ•°å¤§äº12
+ * @param[in]   corres  å¯¹åº”ç‰¹å¾ç‚¹å¯¹
+ * @param[out]  Rotation    å½“å‰å¸§åˆ°å‚è€ƒå¸§çš„æ—‹è½¬çŸ©é˜µ
+ * @param[out]  Translation å½“å‰å¸§åˆ°å‚è€ƒå¸§çš„å¹³ç§»å‘é‡
+ * @return      bool    true:å†…ç‚¹æ•°å¤§äº12
 */
 bool MotionEstimator::solveRelativeRT(const vector<pair<Vector3d, Vector3d>> &corres, Matrix3d &Rotation, Vector3d &Translation)
 {
@@ -212,13 +212,13 @@ bool MotionEstimator::solveRelativeRT(const vector<pair<Vector3d, Vector3d>> &co
         cv::Mat mask;
         
         /**
-         *  Mat cv::findFundamentalMat(  ·µ»ØÍ¨¹ıRANSACËã·¨Çó½âÁ½·ùÍ¼ÏñÖ®¼äµÄ±¾ÖÊ¾ØÕóE
-         *      nputArray  points1,             µÚÒ»·ùÍ¼ÏñµãµÄÊı×é
-         *      InputArray  points2,            µÚ¶ş·ùÍ¼ÏñµãµÄÊı×é
-         *      int     method = FM_RANSAC,     RANSAC Ëã·¨
-         *      double  param1 = 3.,            µãµ½¶Ô¼«ÏßµÄ×î´ó¾àÀë£¬³¬¹ıÕâ¸öÖµµÄµã½«±»ÉáÆú
-         *      double  param2 = 0.99,          ¾ØÕóÕıÈ·µÄ¿ÉĞÅ¶È
-         *      OutputArray mask = noArray()    ÔÚ¼ÆËã¹ı³ÌÖĞÃ»ÓĞ±»ÉáÆúµÄµã
+         *  Mat cv::findFundamentalMat(  è¿”å›é€šè¿‡RANSACç®—æ³•æ±‚è§£ä¸¤å¹…å›¾åƒä¹‹é—´çš„æœ¬è´¨çŸ©é˜µE
+         *      nputArray  points1,             ç¬¬ä¸€å¹…å›¾åƒç‚¹çš„æ•°ç»„
+         *      InputArray  points2,            ç¬¬äºŒå¹…å›¾åƒç‚¹çš„æ•°ç»„
+         *      int     method = FM_RANSAC,     RANSAC ç®—æ³•
+         *      double  param1 = 3.,            ç‚¹åˆ°å¯¹æçº¿çš„æœ€å¤§è·ç¦»ï¼Œè¶…è¿‡è¿™ä¸ªå€¼çš„ç‚¹å°†è¢«èˆå¼ƒ
+         *      double  param2 = 0.99,          çŸ©é˜µæ­£ç¡®çš„å¯ä¿¡åº¦
+         *      OutputArray mask = noArray()    åœ¨è®¡ç®—è¿‡ç¨‹ä¸­æ²¡æœ‰è¢«èˆå¼ƒçš„ç‚¹
          *  ) 
         */   
         cv::Mat E = cv::findFundamentalMat(ll, rr, cv::FM_RANSAC, 0.3 / 460, 0.99, mask);
@@ -227,14 +227,14 @@ bool MotionEstimator::solveRelativeRT(const vector<pair<Vector3d, Vector3d>> &co
         cv::Mat rot, trans;
 
         /**
-         *  int cv::recoverPose (   Í¨¹ı±¾ÖÊ¾ØÕóµÃµ½Rt£¬·µ»ØÍ¨¹ıÊÖĞÔĞ£ÑéµÄÄÚµã¸öÊı
-         *      InputArray  E,              ±¾ÖÊ¾ØÕó
-         *      InputArray  points1,        µÚÒ»·ùÍ¼ÏñµãµÄÊı×é
-         *      InputArray  points2,        µÚ¶ş·ùÍ¼ÏñµãµÄÊı×é
-         *      InputArray  cameraMatrix,   Ïà»úÄÚ²Î
-         *      OutputArray     R,          µÚÒ»Ö¡×ø±êÏµµ½µÚ¶şÖ¡×ø±êÏµµÄĞı×ª¾ØÕó
-         *      OutputArray     t,          µÚÒ»Ö¡×ø±êÏµµ½µÚ¶şÖ¡×ø±êÏµµÄÆ½ÒÆÏòÁ¿
-         *      InputOutputArray    mask = noArray()  ÔÚfindFundamentalMat()ÖĞÃ»ÓĞ±»ÉáÆúµÄµã
+         *  int cv::recoverPose (   é€šè¿‡æœ¬è´¨çŸ©é˜µå¾—åˆ°Rtï¼Œè¿”å›é€šè¿‡æ‰‹æ€§æ ¡éªŒçš„å†…ç‚¹ä¸ªæ•°
+         *      InputArray  E,              æœ¬è´¨çŸ©é˜µ
+         *      InputArray  points1,        ç¬¬ä¸€å¹…å›¾åƒç‚¹çš„æ•°ç»„
+         *      InputArray  points2,        ç¬¬äºŒå¹…å›¾åƒç‚¹çš„æ•°ç»„
+         *      InputArray  cameraMatrix,   ç›¸æœºå†…å‚
+         *      OutputArray     R,          ç¬¬ä¸€å¸§åæ ‡ç³»åˆ°ç¬¬äºŒå¸§åæ ‡ç³»çš„æ—‹è½¬çŸ©é˜µ
+         *      OutputArray     t,          ç¬¬ä¸€å¸§åæ ‡ç³»åˆ°ç¬¬äºŒå¸§åæ ‡ç³»çš„å¹³ç§»å‘é‡
+         *      InputOutputArray    mask = noArray()  åœ¨findFundamentalMat()ä¸­æ²¡æœ‰è¢«èˆå¼ƒçš„ç‚¹
          *  )  
         */
         int inlier_cnt = cv::recoverPose(E, ll, rr, cameraMatrix, rot, trans, mask);
@@ -250,7 +250,7 @@ bool MotionEstimator::solveRelativeRT(const vector<pair<Vector3d, Vector3d>> &co
                 R(i, j) = rot.at<double>(i, j);
         }
 
-        //µÃµ½´°¿Ú×îºóÒ»Ö¡£¨µ±Ç°Ö¡£©µ½µÚlÖ¡£¨²Î¿¼Ö¡£©µÄ×ø±êÏµ±ä»»Rt
+        //å¾—åˆ°çª—å£æœ€åä¸€å¸§ï¼ˆå½“å‰å¸§ï¼‰åˆ°ç¬¬lå¸§ï¼ˆå‚è€ƒå¸§ï¼‰çš„åæ ‡ç³»å˜æ¢Rt
         Rotation = R.transpose();
         Translation = -R.transpose() * T;
         if(inlier_cnt > 12)

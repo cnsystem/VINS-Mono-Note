@@ -6,7 +6,7 @@ Estimator::Estimator(): f_manager{Rs}
     clearState();
 }
 
-//ÊÓ¾õ²âÁ¿²Ğ²îµÄĞ­·½²î¾ØÕó
+//è§†è§‰æµ‹é‡æ®‹å·®çš„åæ–¹å·®çŸ©é˜µ
 void Estimator::setParameter()
 {
     for (int i = 0; i < NUM_OF_CAM; i++)
@@ -20,7 +20,7 @@ void Estimator::setParameter()
     td = TD;
 }
 
-//Çå¿Õ»ò³õÊ¼»¯»¬¶¯´°¿ÚÖĞËùÓĞµÄ×´Ì¬Á¿               
+//æ¸…ç©ºæˆ–åˆå§‹åŒ–æ»‘åŠ¨çª—å£ä¸­æ‰€æœ‰çš„çŠ¶æ€é‡               
 void Estimator::clearState()
 {
     for (int i = 0; i < WINDOW_SIZE + 1; i++)
@@ -84,11 +84,11 @@ void Estimator::clearState()
 }
 
 /**
- * @brief   ´¦ÀíIMUÊı¾İ
- * @Description IMUÔ¤»ı·Ö£¬ÖĞÖµ»ı·ÖµÃµ½µ±Ç°PQV×÷ÎªÓÅ»¯³õÖµ
- * @param[in]   dt Ê±¼ä¼ä¸ô
- * @param[in]   linear_acceleration Ïß¼ÓËÙ¶È
- * @param[in]   angular_velocity ½ÇËÙ¶È
+ * @brief   å¤„ç†IMUæ•°æ®
+ * @Description IMUé¢„ç§¯åˆ†ï¼Œä¸­å€¼ç§¯åˆ†å¾—åˆ°å½“å‰PQVä½œä¸ºä¼˜åŒ–åˆå€¼
+ * @param[in]   dt æ—¶é—´é—´éš”
+ * @param[in]   linear_acceleration çº¿åŠ é€Ÿåº¦
+ * @param[in]   angular_velocity è§’é€Ÿåº¦
  * @return  void
 */
 void Estimator::processIMU(double dt, const Vector3d &linear_acceleration, const Vector3d &angular_velocity)
@@ -119,7 +119,7 @@ void Estimator::processIMU(double dt, const Vector3d &linear_acceleration, const
                 
         Vector3d un_acc_0 = Rs[j] * (acc_0 - Bas[j]) - g;
 
-        //²ÉÓÃµÄÊÇÖĞÖµ»ı·ÖµÄ´«²¥·½Ê½
+        //é‡‡ç”¨çš„æ˜¯ä¸­å€¼ç§¯åˆ†çš„ä¼ æ’­æ–¹å¼
         Vector3d un_gyr = 0.5 * (gyr_0 + angular_velocity) - Bgs[j];
         Rs[j] *= Utility::deltaQ(un_gyr * dt).toRotationMatrix();
         Vector3d un_acc_1 = Rs[j] * (linear_acceleration - Bas[j]) - g;
@@ -132,12 +132,12 @@ void Estimator::processIMU(double dt, const Vector3d &linear_acceleration, const
 }
 
 /**
- * @brief   ´¦ÀíÍ¼ÏñÌØÕ÷Êı¾İ
- * @Description addFeatureCheckParallax()Ìí¼ÓÌØÕ÷µãµ½featureÖĞ£¬¼ÆËãµã¸ú×ÙµÄ´ÎÊıºÍÊÓ²î£¬ÅĞ¶ÏÊÇ·ñÊÇ¹Ø¼üÖ¡               
- *              ÅĞ¶Ï²¢½øĞĞÍâ²Î±ê¶¨
- *              ½øĞĞÊÓ¾õ¹ßĞÔÁªºÏ³õÊ¼»¯»ò»ùÓÚ»¬¶¯´°¿Ú·ÇÏßĞÔÓÅ»¯µÄ½ôñîºÏVIO
- * @param[in]   image Ä³Ö¡ËùÓĞÌØÕ÷µãµÄ[camera_id,[x,y,z,u,v,vx,vy]]s¹¹³ÉµÄmap,Ë÷ÒıÎªfeature_id
- * @param[in]   header Ä³Ö¡Í¼ÏñµÄÍ·ĞÅÏ¢
+ * @brief   å¤„ç†å›¾åƒç‰¹å¾æ•°æ®
+ * @Description addFeatureCheckParallax()æ·»åŠ ç‰¹å¾ç‚¹åˆ°featureä¸­ï¼Œè®¡ç®—ç‚¹è·Ÿè¸ªçš„æ¬¡æ•°å’Œè§†å·®ï¼Œåˆ¤æ–­æ˜¯å¦æ˜¯å…³é”®å¸§               
+ *              åˆ¤æ–­å¹¶è¿›è¡Œå¤–å‚æ ‡å®š
+ *              è¿›è¡Œè§†è§‰æƒ¯æ€§è”åˆåˆå§‹åŒ–æˆ–åŸºäºæ»‘åŠ¨çª—å£éçº¿æ€§ä¼˜åŒ–çš„ç´§è€¦åˆVIO
+ * @param[in]   image æŸå¸§æ‰€æœ‰ç‰¹å¾ç‚¹çš„[camera_id,[x,y,z,u,v,vx,vy]]sæ„æˆçš„map,ç´¢å¼•ä¸ºfeature_id
+ * @param[in]   header æŸå¸§å›¾åƒçš„å¤´ä¿¡æ¯
  * @return  void
 */
 void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<double, 7, 1>>>> &image, const std_msgs::Header &header)
@@ -145,8 +145,8 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
     ROS_DEBUG("new image coming ------------------------------------------");
     ROS_DEBUG("Adding feature points %lu", image.size());
 
-    //Ìí¼ÓÖ®Ç°¼ì²âµ½µÄÌØÕ÷µãµ½featureÈİÆ÷ÖĞ£¬¼ÆËãÃ¿Ò»¸öµã¸ú×ÙµÄ´ÎÊı£¬ÒÔ¼°ËüµÄÊÓ²î
-    //Í¨¹ı¼ì²âÁ½Ö¡Ö®¼äµÄÊÓ²î¾ö¶¨´ÎĞÂÖ¡ÊÇ·ñ×÷Îª¹Ø¼üÖ¡
+    //æ·»åŠ ä¹‹å‰æ£€æµ‹åˆ°çš„ç‰¹å¾ç‚¹åˆ°featureå®¹å™¨ä¸­ï¼Œè®¡ç®—æ¯ä¸€ä¸ªç‚¹è·Ÿè¸ªçš„æ¬¡æ•°ï¼Œä»¥åŠå®ƒçš„è§†å·®
+    //é€šè¿‡æ£€æµ‹ä¸¤å¸§ä¹‹é—´çš„è§†å·®å†³å®šæ¬¡æ–°å¸§æ˜¯å¦ä½œä¸ºå…³é”®å¸§
     if (f_manager.addFeatureCheckParallax(frame_count, image, td))
         marginalization_flag = MARGIN_OLD;//=0
     else
@@ -158,24 +158,24 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
     ROS_DEBUG("number of feature: %d", f_manager.getFeatureCount());
     Headers[frame_count] = header;
 
-    //½«Í¼ÏñÊı¾İ¡¢Ê±¼ä¡¢ÁÙÊ±Ô¤»ı·ÖÖµ´æµ½Í¼ÏñÖ¡ÀàÖĞ
+    //å°†å›¾åƒæ•°æ®ã€æ—¶é—´ã€ä¸´æ—¶é¢„ç§¯åˆ†å€¼å­˜åˆ°å›¾åƒå¸§ç±»ä¸­
     ImageFrame imageframe(image, header.stamp.toSec());
     imageframe.pre_integration = tmp_pre_integration;
     
     all_image_frame.insert(make_pair(header.stamp.toSec(), imageframe));
     
-    //¸üĞÂÁÙÊ±Ô¤»ı·Ö³õÊ¼Öµ
+    //æ›´æ–°ä¸´æ—¶é¢„ç§¯åˆ†åˆå§‹å€¼
     tmp_pre_integration = new IntegrationBase{acc_0, gyr_0, Bas[frame_count], Bgs[frame_count]};
 
-    if(ESTIMATE_EXTRINSIC == 2)//Èç¹ûÃ»ÓĞÍâ²ÎÔò½øĞĞ±ê¶¨
+    if(ESTIMATE_EXTRINSIC == 2)//å¦‚æœæ²¡æœ‰å¤–å‚åˆ™è¿›è¡Œæ ‡å®š
     {
         ROS_INFO("calibrating extrinsic param, rotation movement is needed");
         if (frame_count != 0)
         {
-            //µÃµ½Á½Ö¡Ö®¼ä¹éÒ»»¯ÌØÕ÷µã
+            //å¾—åˆ°ä¸¤å¸§ä¹‹é—´å½’ä¸€åŒ–ç‰¹å¾ç‚¹
             vector<pair<Vector3d, Vector3d>> corres = f_manager.getCorresponding(frame_count - 1, frame_count);
             Matrix3d calib_ric;
-            //±ê¶¨´Ócameraµ½IMUÖ®¼äµÄĞı×ª¾ØÕó
+            //æ ‡å®šä»cameraåˆ°IMUä¹‹é—´çš„æ—‹è½¬çŸ©é˜µ
             if (initial_ex_rotation.CalibrationExRotation(corres, pre_integrations[frame_count]->delta_q, calib_ric))
             {
                 ROS_WARN("initial extrinsic rotation calib success");
@@ -187,24 +187,24 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
         }
     }
 
-    if (solver_flag == INITIAL)//³õÊ¼»¯
+    if (solver_flag == INITIAL)//åˆå§‹åŒ–
     {
-        //frame_countÊÇ»¬¶¯´°¿ÚÖĞÍ¼ÏñÖ¡µÄÊıÁ¿£¬Ò»¿ªÊ¼³õÊ¼»¯Îª0£¬»¬¶¯´°¿Ú×ÜÖ¡ÊıWINDOW_SIZE=10
-        //È·±£ÓĞ×ã¹»µÄframe²ÎÓë³õÊ¼»¯
+        //frame_countæ˜¯æ»‘åŠ¨çª—å£ä¸­å›¾åƒå¸§çš„æ•°é‡ï¼Œä¸€å¼€å§‹åˆå§‹åŒ–ä¸º0ï¼Œæ»‘åŠ¨çª—å£æ€»å¸§æ•°WINDOW_SIZE=10
+        //ç¡®ä¿æœ‰è¶³å¤Ÿçš„frameå‚ä¸åˆå§‹åŒ–
         if (frame_count == WINDOW_SIZE)
         {
             bool result = false;
-            //ÓĞÍâ²ÎÇÒµ±Ç°Ö¡Ê±¼ä´Á´óÓÚ³õÊ¼»¯Ê±¼ä´Á0.1Ãë£¬¾Í½øĞĞ³õÊ¼»¯²Ù×÷
+            //æœ‰å¤–å‚ä¸”å½“å‰å¸§æ—¶é—´æˆ³å¤§äºåˆå§‹åŒ–æ—¶é—´æˆ³0.1ç§’ï¼Œå°±è¿›è¡Œåˆå§‹åŒ–æ“ä½œ
             if( ESTIMATE_EXTRINSIC != 2 && (header.stamp.toSec() - initial_timestamp) > 0.1)
             {
-               //ÊÓ¾õ¹ßĞÔÁªºÏ³õÊ¼»¯
+               //è§†è§‰æƒ¯æ€§è”åˆåˆå§‹åŒ–
                result = initialStructure();
-               //¸üĞÂ³õÊ¼»¯Ê±¼ä´Á
+               //æ›´æ–°åˆå§‹åŒ–æ—¶é—´æˆ³
                initial_timestamp = header.stamp.toSec();
             }
-            if(result)//³õÊ¼»¯³É¹¦
+            if(result)//åˆå§‹åŒ–æˆåŠŸ
             {
-                //ÏÈ½øĞĞÒ»´Î»¬¶¯´°¿Ú·ÇÏßĞÔÓÅ»¯£¬µÃµ½µ±Ç°Ö¡ÓëµÚÒ»Ö¡µÄÎ»×Ë
+                //å…ˆè¿›è¡Œä¸€æ¬¡æ»‘åŠ¨çª—å£éçº¿æ€§ä¼˜åŒ–ï¼Œå¾—åˆ°å½“å‰å¸§ä¸ç¬¬ä¸€å¸§çš„ä½å§¿
                 solver_flag = NON_LINEAR;
                 solveOdometry();
                 slideWindow();
@@ -217,18 +217,18 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
                 
             }
             else
-                slideWindow();//³õÊ¼»¯Ê§°ÜÔòÖ±½Ó»¬¶¯´°¿Ú
+                slideWindow();//åˆå§‹åŒ–å¤±è´¥åˆ™ç›´æ¥æ»‘åŠ¨çª—å£
         }
         else
-            frame_count++;//Í¼ÏñÖ¡ÊıÁ¿+1
+            frame_count++;//å›¾åƒå¸§æ•°é‡+1
     }
-    else//½ôñîºÏµÄ·ÇÏßĞÔÓÅ»¯
+    else//ç´§è€¦åˆçš„éçº¿æ€§ä¼˜åŒ–
     {
         TicToc t_solve;
         solveOdometry();
         ROS_DEBUG("solver costs: %fms", t_solve.toc());
 
-        //¹ÊÕÏ¼ì²âÓë»Ö¸´,Ò»µ©¼ì²âµ½¹ÊÕÏ£¬ÏµÍ³½«ÇĞ»»»Ø³õÊ¼»¯½×¶Î
+        //æ•…éšœæ£€æµ‹ä¸æ¢å¤,ä¸€æ—¦æ£€æµ‹åˆ°æ•…éšœï¼Œç³»ç»Ÿå°†åˆ‡æ¢å›åˆå§‹åŒ–é˜¶æ®µ
         if (failureDetection())
         {
             ROS_WARN("failure detection!");
@@ -256,18 +256,18 @@ void Estimator::processImage(const map<int, vector<pair<int, Eigen::Matrix<doubl
 }
 
 /**
- * @brief   ÊÓ¾õµÄ½á¹¹³õÊ¼»¯
- * @Description È·±£IMUÓĞ³ä·ÖÔË¶¯¼¤Àø
- *              relativePose()ÕÒµ½¾ßÓĞ×ã¹»ÊÓ²îµÄÁ½Ö¡,ÓÉF¾ØÕó»Ö¸´R¡¢t×÷Îª³õÊ¼Öµ
- *              sfm.construct() È«¾Ö´¿ÊÓ¾õSFM »Ö¸´»¬¶¯´°¿ÚÖ¡µÄÎ»×Ë
- *              visualInitialAlign()ÊÓ¾õ¹ßĞÔÁªºÏ³õÊ¼»¯
- * @return  bool true:³õÊ¼»¯³É¹¦
+ * @brief   è§†è§‰çš„ç»“æ„åˆå§‹åŒ–
+ * @Description ç¡®ä¿IMUæœ‰å……åˆ†è¿åŠ¨æ¿€åŠ±
+ *              relativePose()æ‰¾åˆ°å…·æœ‰è¶³å¤Ÿè§†å·®çš„ä¸¤å¸§,ç”±FçŸ©é˜µæ¢å¤Rã€tä½œä¸ºåˆå§‹å€¼
+ *              sfm.construct() å…¨å±€çº¯è§†è§‰SFM æ¢å¤æ»‘åŠ¨çª—å£å¸§çš„ä½å§¿
+ *              visualInitialAlign()è§†è§‰æƒ¯æ€§è”åˆåˆå§‹åŒ–
+ * @return  bool true:åˆå§‹åŒ–æˆåŠŸ
 */
 bool Estimator::initialStructure()
 {
     TicToc t_sfm;
 
-    //Í¨¹ı¼ÓËÙ¶È±ê×¼²îÅĞ¶ÏIMUÊÇ·ñÓĞ³ä·ÖÔË¶¯ÒÔ³õÊ¼»¯¡£
+    //é€šè¿‡åŠ é€Ÿåº¦æ ‡å‡†å·®åˆ¤æ–­IMUæ˜¯å¦æœ‰å……åˆ†è¿åŠ¨ä»¥åˆå§‹åŒ–ã€‚
     {
         map<double, ImageFrame>::iterator frame_it;
         Vector3d sum_g;
@@ -278,7 +278,7 @@ bool Estimator::initialStructure()
             sum_g += tmp_g;
         }
         Vector3d aver_g;
-        aver_g = sum_g * 1.0 / ((int)all_image_frame.size() - 1);//¾ùÖµ
+        aver_g = sum_g * 1.0 / ((int)all_image_frame.size() - 1);//å‡å€¼
         
         double var = 0;
         for (frame_it = all_image_frame.begin(), frame_it++; frame_it != all_image_frame.end(); frame_it++)
@@ -288,7 +288,7 @@ bool Estimator::initialStructure()
             var += (tmp_g - aver_g).transpose() * (tmp_g - aver_g);
             //cout << "frame g " << tmp_g.transpose() << endl;
         }
-        var = sqrt(var / ((int)all_image_frame.size() - 1));//±ê×¼²î
+        var = sqrt(var / ((int)all_image_frame.size() - 1));//æ ‡å‡†å·®
         //ROS_WARN("IMU variation %f!", var);
         
         if(var < 0.25)
@@ -298,7 +298,7 @@ bool Estimator::initialStructure()
         }
     }
 
-    //½«f_managerÖĞµÄËùÓĞfeature±£´æµ½´æÓĞSFMFeature¶ÔÏóµÄsfm_fÖĞ
+    //å°†f_managerä¸­çš„æ‰€æœ‰featureä¿å­˜åˆ°å­˜æœ‰SFMFeatureå¯¹è±¡çš„sfm_fä¸­
     Quaterniond Q[frame_count + 1];
     Vector3d T[frame_count + 1];
     map<int, Vector3d> sfm_tracked_points;
@@ -322,29 +322,29 @@ bool Estimator::initialStructure()
     Vector3d relative_T;
     int l;
 
-    //±£Ö¤¾ßÓĞ×ã¹»µÄÊÓ²î,ÓÉF¾ØÕó»Ö¸´Rt
-    //µÚlÖ¡ÊÇ´ÓµÚÒ»Ö¡¿ªÊ¼µ½»¬¶¯´°¿ÚÖĞµÚÒ»¸öÂú×ãÓëµ±Ç°Ö¡µÄÆ½¾ùÊÓ²î×ã¹»´óµÄÖ¡£¬»á×÷Îª²Î¿¼Ö¡µ½ÏÂÃæµÄÈ«¾ÖsfmÊ¹ÓÃ
-    //´Ë´¦µÄrelative_R£¬relative_TÎªµ±Ç°Ö¡µ½²Î¿¼Ö¡£¨µÚlÖ¡£©µÄ×ø±êÏµ±ä»»Rt
+    //ä¿è¯å…·æœ‰è¶³å¤Ÿçš„è§†å·®,ç”±FçŸ©é˜µæ¢å¤Rt
+    //ç¬¬lå¸§æ˜¯ä»ç¬¬ä¸€å¸§å¼€å§‹åˆ°æ»‘åŠ¨çª—å£ä¸­ç¬¬ä¸€ä¸ªæ»¡è¶³ä¸å½“å‰å¸§çš„å¹³å‡è§†å·®è¶³å¤Ÿå¤§çš„å¸§ï¼Œä¼šä½œä¸ºå‚è€ƒå¸§åˆ°ä¸‹é¢çš„å…¨å±€sfmä½¿ç”¨
+    //æ­¤å¤„çš„relative_Rï¼Œrelative_Tä¸ºå½“å‰å¸§åˆ°å‚è€ƒå¸§ï¼ˆç¬¬lå¸§ï¼‰çš„åæ ‡ç³»å˜æ¢Rt
     if (!relativePose(relative_R, relative_T, l))
     {
         ROS_INFO("Not enough features or parallax; Move device around");
         return false;
     }
 
-    //¶Ô´°¿ÚÖĞÃ¿¸öÍ¼ÏñÖ¡Çó½âsfmÎÊÌâ
-    //µÃµ½ËùÓĞÍ¼ÏñÖ¡Ïà¶ÔÓÚ²Î¿¼Ö¡µÄ×ËÌ¬ËÄÔªÊıQ¡¢Æ½ÒÆÏòÁ¿TºÍÌØÕ÷µã×ø±êsfm_tracked_points¡£
+    //å¯¹çª—å£ä¸­æ¯ä¸ªå›¾åƒå¸§æ±‚è§£sfmé—®é¢˜
+    //å¾—åˆ°æ‰€æœ‰å›¾åƒå¸§ç›¸å¯¹äºå‚è€ƒå¸§çš„å§¿æ€å››å…ƒæ•°Qã€å¹³ç§»å‘é‡Tå’Œç‰¹å¾ç‚¹åæ ‡sfm_tracked_pointsã€‚
     GlobalSFM sfm;
     if(!sfm.construct(frame_count + 1, Q, T, l,
               relative_R, relative_T,
               sfm_f, sfm_tracked_points))
     {
-        //Çó½âÊ§°ÜÔò±ßÔµ»¯×îÔçÒ»Ö¡²¢»¬¶¯´°¿Ú
+        //æ±‚è§£å¤±è´¥åˆ™è¾¹ç¼˜åŒ–æœ€æ—©ä¸€å¸§å¹¶æ»‘åŠ¨çª—å£
         ROS_DEBUG("global SFM failed!");
         marginalization_flag = MARGIN_OLD;
         return false;
     }
 
-    //¶ÔÓÚËùÓĞµÄÍ¼ÏñÖ¡£¬°üÀ¨²»ÔÚ»¬¶¯´°¿ÚÖĞµÄ£¬Ìá¹©³õÊ¼µÄRT¹À¼Æ£¬È»ºósolvePnP½øĞĞÓÅ»¯,µÃµ½Ã¿Ò»Ö¡µÄ×ËÌ¬
+    //å¯¹äºæ‰€æœ‰çš„å›¾åƒå¸§ï¼ŒåŒ…æ‹¬ä¸åœ¨æ»‘åŠ¨çª—å£ä¸­çš„ï¼Œæä¾›åˆå§‹çš„RTä¼°è®¡ï¼Œç„¶åsolvePnPè¿›è¡Œä¼˜åŒ–,å¾—åˆ°æ¯ä¸€å¸§çš„å§¿æ€
     map<double, ImageFrame>::iterator frame_it;
     map<int, Vector3d>::iterator it;
     frame_it = all_image_frame.begin( );
@@ -364,11 +364,11 @@ bool Estimator::initialStructure()
             i++;
         }
 
-        //QºÍTÊÇÍ¼ÏñÖ¡µÄÎ»×Ë£¬¶ø²»ÊÇÇó½âPNPÊ±ËùÓÃµÄ×ø±êÏµ±ä»»¾ØÕó
+        //Qå’ŒTæ˜¯å›¾åƒå¸§çš„ä½å§¿ï¼Œè€Œä¸æ˜¯æ±‚è§£PNPæ—¶æ‰€ç”¨çš„åæ ‡ç³»å˜æ¢çŸ©é˜µ
         Matrix3d R_inital = (Q[i].inverse()).toRotationMatrix();
         Vector3d P_inital = - R_inital * T[i];
         cv::eigen2cv(R_inital, tmp_r);
-        //ÂŞµÂÀï¸ñË¹¹«Ê½½«Ğı×ª¾ØÕó×ª»»³ÉĞı×ªÏòÁ¿
+        //ç½—å¾·é‡Œæ ¼æ–¯å…¬å¼å°†æ—‹è½¬çŸ©é˜µè½¬æ¢æˆæ—‹è½¬å‘é‡
         cv::Rodrigues(tmp_r, rvec);
         cv::eigen2cv(P_inital, t);
 
@@ -392,7 +392,7 @@ bool Estimator::initialStructure()
                 }
             }
         }
-        //±£Ö¤ÌØÕ÷µãÊı´óÓÚ5
+        //ä¿è¯ç‰¹å¾ç‚¹æ•°å¤§äº5
         cv::Mat K = (cv::Mat_<double>(3, 3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);     
         if(pts_3_vector.size() < 6)
         {
@@ -401,15 +401,15 @@ bool Estimator::initialStructure()
             return false;
         }
         /** 
-         *bool cv::solvePnP(    Çó½âpnpÎÊÌâ
-         *   InputArray  objectPoints,   ÌØÕ÷µãµÄ3D×ø±êÊı×é
-         *   InputArray  imagePoints,    ÌØÕ÷µã¶ÔÓ¦µÄÍ¼Ïñ×ø±ê
-         *   InputArray  cameraMatrix,   Ïà»úÄÚ²Î¾ØÕó
-         *   InputArray  distCoeffs,     Ê§ÕæÏµÊıµÄÊäÈëÏòÁ¿
-         *   OutputArray     rvec,       Ğı×ªÏòÁ¿
-         *   OutputArray     tvec,       Æ½ÒÆÏòÁ¿
-         *   bool    useExtrinsicGuess = false, ÎªÕæÔòÊ¹ÓÃÌá¹©µÄ³õÊ¼¹À¼ÆÖµ
-         *   int     flags = SOLVEPNP_ITERATIVE ²ÉÓÃLMÓÅ»¯
+         *bool cv::solvePnP(    æ±‚è§£pnpé—®é¢˜
+         *   InputArray  objectPoints,   ç‰¹å¾ç‚¹çš„3Dåæ ‡æ•°ç»„
+         *   InputArray  imagePoints,    ç‰¹å¾ç‚¹å¯¹åº”çš„å›¾åƒåæ ‡
+         *   InputArray  cameraMatrix,   ç›¸æœºå†…å‚çŸ©é˜µ
+         *   InputArray  distCoeffs,     å¤±çœŸç³»æ•°çš„è¾“å…¥å‘é‡
+         *   OutputArray     rvec,       æ—‹è½¬å‘é‡
+         *   OutputArray     tvec,       å¹³ç§»å‘é‡
+         *   bool    useExtrinsicGuess = false, ä¸ºçœŸåˆ™ä½¿ç”¨æä¾›çš„åˆå§‹ä¼°è®¡å€¼
+         *   int     flags = SOLVEPNP_ITERATIVE é‡‡ç”¨LMä¼˜åŒ–
          *)   
          */
         if (! cv::solvePnP(pts_3_vector, pts_2_vector, K, D, rvec, t, 1))
@@ -420,7 +420,7 @@ bool Estimator::initialStructure()
         cv::Rodrigues(rvec, r);
         MatrixXd R_pnp,tmp_R_pnp;
         cv::cv2eigen(r, tmp_R_pnp);
-        //ÕâÀïÒ²Í¬ÑùĞèÒª½«×ø±ê±ä»»¾ØÕó×ª±ä³ÉÍ¼ÏñÖ¡Î»×Ë£¬²¢×ª»»ÎªIMU×ø±êÏµµÄÎ»×Ë
+        //è¿™é‡Œä¹ŸåŒæ ·éœ€è¦å°†åæ ‡å˜æ¢çŸ©é˜µè½¬å˜æˆå›¾åƒå¸§ä½å§¿ï¼Œå¹¶è½¬æ¢ä¸ºIMUåæ ‡ç³»çš„ä½å§¿
         R_pnp = tmp_R_pnp.transpose();
         MatrixXd T_pnp;
         cv::cv2eigen(t, T_pnp);
@@ -429,7 +429,7 @@ bool Estimator::initialStructure()
         frame_it->second.T = T_pnp;
     }
 
-    //½øĞĞÊÓ¾õ¹ßĞÔÁªºÏ³õÊ¼»¯
+    //è¿›è¡Œè§†è§‰æƒ¯æ€§è”åˆåˆå§‹åŒ–
     if (visualInitialAlign())
         return true;
     else
@@ -441,18 +441,18 @@ bool Estimator::initialStructure()
 }
 
 /**
- * @brief   ÊÓ¾õ¹ßĞÔÁªºÏ³õÊ¼»¯
- * @Description ÍÓÂİÒÇµÄÆ«ÖÃĞ£×¼(¼ÓËÙ¶ÈÆ«ÖÃÃ»ÓĞ´¦Àí) ¼ÆËãËÙ¶ÈV[0:n] ÖØÁ¦g ³ß¶Ès
- *              ¸üĞÂÁËBgsºó£¬IMU²âÁ¿Á¿ĞèÒªrepropagate  
- *              µÃµ½³ß¶ÈsºÍÖØÁ¦gµÄ·½Ïòºó£¬Ğè¸üĞÂËùÓĞÍ¼ÏñÖ¡ÔÚÊÀ½ç×ø±êÏµÏÂµÄPs¡¢Rs¡¢Vs
- * @return  bool true£º³É¹¦
+ * @brief   è§†è§‰æƒ¯æ€§è”åˆåˆå§‹åŒ–
+ * @Description é™€èºä»ªçš„åç½®æ ¡å‡†(åŠ é€Ÿåº¦åç½®æ²¡æœ‰å¤„ç†) è®¡ç®—é€Ÿåº¦V[0:n] é‡åŠ›g å°ºåº¦s
+ *              æ›´æ–°äº†Bgsåï¼ŒIMUæµ‹é‡é‡éœ€è¦repropagate  
+ *              å¾—åˆ°å°ºåº¦så’Œé‡åŠ›gçš„æ–¹å‘åï¼Œéœ€æ›´æ–°æ‰€æœ‰å›¾åƒå¸§åœ¨ä¸–ç•Œåæ ‡ç³»ä¸‹çš„Psã€Rsã€Vs
+ * @return  bool trueï¼šæˆåŠŸ
  */
 bool Estimator::visualInitialAlign()
 {
     TicToc t_g;
     VectorXd x;
 
-    //¼ÆËãÍÓÂİÒÇÆ«ÖÃ£¬³ß¶È£¬ÖØÁ¦¼ÓËÙ¶ÈºÍËÙ¶È
+    //è®¡ç®—é™€èºä»ªåç½®ï¼Œå°ºåº¦ï¼Œé‡åŠ›åŠ é€Ÿåº¦å’Œé€Ÿåº¦
     bool result = VisualIMUAlignment(all_image_frame, Bgs, g, x);
     if(!result)
     {
@@ -460,7 +460,7 @@ bool Estimator::visualInitialAlign()
         return false;
     }
 
-    // µÃµ½ËùÓĞÍ¼ÏñÖ¡µÄÎ»×ËPs¡¢Rs£¬²¢½«ÆäÖÃÎª¹Ø¼üÖ¡
+    // å¾—åˆ°æ‰€æœ‰å›¾åƒå¸§çš„ä½å§¿Psã€Rsï¼Œå¹¶å°†å…¶ç½®ä¸ºå…³é”®å¸§
     for (int i = 0; i <= frame_count; i++)
     {
         Matrix3d Ri = all_image_frame[Headers[i].stamp.toSec()].R;
@@ -470,13 +470,13 @@ bool Estimator::visualInitialAlign()
         all_image_frame[Headers[i].stamp.toSec()].is_key_frame = true;
     }
 
-    //½«ËùÓĞÌØÕ÷µãµÄÉî¶ÈÖÃÎª-1
+    //å°†æ‰€æœ‰ç‰¹å¾ç‚¹çš„æ·±åº¦ç½®ä¸º-1
     VectorXd dep = f_manager.getDepthVector();
     for (int i = 0; i < dep.size(); i++)
         dep[i] = -1;
     f_manager.clearDepth(dep);
 
-    //ÖØĞÂ¼ÆËãÌØÕ÷µãµÄÉî¶È
+    //é‡æ–°è®¡ç®—ç‰¹å¾ç‚¹çš„æ·±åº¦
     Vector3d TIC_TMP[NUM_OF_CAM];
     for(int i = 0; i < NUM_OF_CAM; i++)
         TIC_TMP[i].setZero();
@@ -486,15 +486,15 @@ bool Estimator::visualInitialAlign()
 
     double s = (x.tail<1>())(0);
 
-    //ÍÓÂİÒÇµÄÆ«ÖÃbgs¸Ä±ä£¬ÖØĞÂ¼ÆËãÔ¤»ı·Ö
+    //é™€èºä»ªçš„åç½®bgsæ”¹å˜ï¼Œé‡æ–°è®¡ç®—é¢„ç§¯åˆ†
     for (int i = 0; i <= WINDOW_SIZE; i++)
     {
         pre_integrations[i]->repropagate(Vector3d::Zero(), Bgs[i]);
     }
     
-    //½«Ps¡¢Vs¡¢depth³ß¶ÈsËõ·Å
+    //å°†Psã€Vsã€depthå°ºåº¦sç¼©æ”¾
     for (int i = frame_count; i >= 0; i--)
-        //Ps×ª±äÎªµÚiÖ¡imu×ø±êÏµµ½µÚ0Ö¡imu×ø±êÏµµÄ±ä»»
+        //Psè½¬å˜ä¸ºç¬¬iå¸§imuåæ ‡ç³»åˆ°ç¬¬0å¸§imuåæ ‡ç³»çš„å˜æ¢
         Ps[i] = s * Ps[i] - Rs[i] * TIC[0] - (s * Ps[0] - Rs[0] * TIC[0]);
     
     int kv = -1;
@@ -504,7 +504,7 @@ bool Estimator::visualInitialAlign()
         if(frame_i->second.is_key_frame)
         {
             kv++;
-            //VsÎªÓÅ»¯µÃµ½µÄËÙ¶È
+            //Vsä¸ºä¼˜åŒ–å¾—åˆ°çš„é€Ÿåº¦
             Vs[kv] = frame_i->second.R * x.segment<3>(kv * 3);
         }
     }
@@ -517,7 +517,7 @@ bool Estimator::visualInitialAlign()
         it_per_id.estimated_depth *= s;
     }
 
-    //Í¨¹ı½«ÖØÁ¦Ğı×ªµ½zÖáÉÏ£¬µÃµ½ÊÀ½ç×ø±êÏµÓëÉãÏñ»ú×ø±êÏµc0Ö®¼äµÄĞı×ª¾ØÕórot_diff
+    //é€šè¿‡å°†é‡åŠ›æ—‹è½¬åˆ°zè½´ä¸Šï¼Œå¾—åˆ°ä¸–ç•Œåæ ‡ç³»ä¸æ‘„åƒæœºåæ ‡ç³»c0ä¹‹é—´çš„æ—‹è½¬çŸ©é˜µrot_diff
     Matrix3d R0 = Utility::g2R(g);
     double yaw = Utility::R2ypr(R0 * Rs[0]).x();
     R0 = Utility::ypr2R(Eigen::Vector3d{-yaw, 0, 0}) * R0;
@@ -525,7 +525,7 @@ bool Estimator::visualInitialAlign()
 
     //Matrix3d rot_diff = R0 * Rs[0].transpose();
     Matrix3d rot_diff = R0;
-    //ËùÓĞ±äÁ¿´Ó²Î¿¼×ø±êÏµc0Ğı×ªµ½ÊÀ½ç×ø±êÏµw
+    //æ‰€æœ‰å˜é‡ä»å‚è€ƒåæ ‡ç³»c0æ—‹è½¬åˆ°ä¸–ç•Œåæ ‡ç³»w
     for (int i = 0; i <= frame_count; i++)
     {
         Ps[i] = rot_diff * Ps[i];
@@ -540,29 +540,29 @@ bool Estimator::visualInitialAlign()
 }
 
 /**
- * @brief   ÅĞ¶ÏÁ½Ö¡ÓĞ×ã¹»ÊÓ²î30ÇÒÄÚµãÊıÄ¿´óÓÚ12Ôò¿É½øĞĞ³õÊ¼»¯£¬Í¬Ê±µÃµ½RºÍT
- * @Description    ÅĞ¶ÏÃ¿Ö¡µ½´°¿Ú×îºóÒ»Ö¡¶ÔÓ¦ÌØÕ÷µãµÄÆ½¾ùÊÓ²îÊÇ·ñ´óÓÚ30
-                solveRelativeRT()Í¨¹ı»ù´¡¾ØÕó¼ÆËãµ±Ç°Ö¡ÓëµÚlÖ¡Ö®¼äµÄRºÍT,²¢ÅĞ¶ÏÄÚµãÊıÄ¿ÊÇ·ñ×ã¹»
- * @param[out]   relative_R µ±Ç°Ö¡µ½µÚlÖ¡Ö®¼äµÄĞı×ª¾ØÕóR
- * @param[out]   relative_T µ±Ç°Ö¡µ½µÚlÖ¡Ö®¼äµÄÆ½ÒÆÏòÁ¿T
- * @param[out]   L ±£´æ»¬¶¯´°¿ÚÖĞÓëµ±Ç°Ö¡Âú×ã³õÊ¼»¯Ìõ¼şµÄÄÇÒ»Ö¡
- * @return  bool 1:¿ÉÒÔ½øĞĞ³õÊ¼»¯;0:²»Âú×ã³õÊ¼»¯Ìõ¼ş
+ * @brief   åˆ¤æ–­ä¸¤å¸§æœ‰è¶³å¤Ÿè§†å·®30ä¸”å†…ç‚¹æ•°ç›®å¤§äº12åˆ™å¯è¿›è¡Œåˆå§‹åŒ–ï¼ŒåŒæ—¶å¾—åˆ°Rå’ŒT
+ * @Description    åˆ¤æ–­æ¯å¸§åˆ°çª—å£æœ€åä¸€å¸§å¯¹åº”ç‰¹å¾ç‚¹çš„å¹³å‡è§†å·®æ˜¯å¦å¤§äº30
+                solveRelativeRT()é€šè¿‡åŸºç¡€çŸ©é˜µè®¡ç®—å½“å‰å¸§ä¸ç¬¬lå¸§ä¹‹é—´çš„Rå’ŒT,å¹¶åˆ¤æ–­å†…ç‚¹æ•°ç›®æ˜¯å¦è¶³å¤Ÿ
+ * @param[out]   relative_R å½“å‰å¸§åˆ°ç¬¬lå¸§ä¹‹é—´çš„æ—‹è½¬çŸ©é˜µR
+ * @param[out]   relative_T å½“å‰å¸§åˆ°ç¬¬lå¸§ä¹‹é—´çš„å¹³ç§»å‘é‡T
+ * @param[out]   L ä¿å­˜æ»‘åŠ¨çª—å£ä¸­ä¸å½“å‰å¸§æ»¡è¶³åˆå§‹åŒ–æ¡ä»¶çš„é‚£ä¸€å¸§
+ * @return  bool 1:å¯ä»¥è¿›è¡Œåˆå§‹åŒ–;0:ä¸æ»¡è¶³åˆå§‹åŒ–æ¡ä»¶
 */
 bool Estimator::relativePose(Matrix3d &relative_R, Vector3d &relative_T, int &l)
 {
     for (int i = 0; i < WINDOW_SIZE; i++)
     {
-        //Ñ°ÕÒµÚiÖ¡µ½´°¿Ú×îºóÒ»Ö¡µÄ¶ÔÓ¦ÌØÕ÷µã
+        //å¯»æ‰¾ç¬¬iå¸§åˆ°çª—å£æœ€åä¸€å¸§çš„å¯¹åº”ç‰¹å¾ç‚¹
         vector<pair<Vector3d, Vector3d>> corres;
         corres = f_manager.getCorresponding(i, WINDOW_SIZE);
         if (corres.size() > 20)
         {
-            //¼ÆËãÆ½¾ùÊÓ²î
+            //è®¡ç®—å¹³å‡è§†å·®
             double sum_parallax = 0;
             double average_parallax;
             for (int j = 0; j < int(corres.size()); j++)
             {
-                //µÚj¸ö¶ÔÓ¦µãÔÚµÚiÖ¡ºÍ×îºóÒ»Ö¡µÄ(x,y)
+                //ç¬¬jä¸ªå¯¹åº”ç‚¹åœ¨ç¬¬iå¸§å’Œæœ€åä¸€å¸§çš„(x,y)
                 Vector2d pts_0(corres[j].first(0), corres[j].first(1));
                 Vector2d pts_1(corres[j].second(0), corres[j].second(1));
                 double parallax = (pts_0 - pts_1).norm();
@@ -571,8 +571,8 @@ bool Estimator::relativePose(Matrix3d &relative_R, Vector3d &relative_T, int &l)
             }
             average_parallax = 1.0 * sum_parallax / int(corres.size());
 
-            //ÅĞ¶ÏÊÇ·ñÂú×ã³õÊ¼»¯Ìõ¼ş£ºÊÓ²î>30ºÍÄÚµãÊıÂú×ãÒªÇó
-            //Í¬Ê±·µ»Ø´°¿Ú×îºóÒ»Ö¡£¨µ±Ç°Ö¡£©µ½µÚlÖ¡£¨²Î¿¼Ö¡£©µÄRt
+            //åˆ¤æ–­æ˜¯å¦æ»¡è¶³åˆå§‹åŒ–æ¡ä»¶ï¼šè§†å·®>30å’Œå†…ç‚¹æ•°æ»¡è¶³è¦æ±‚
+            //åŒæ—¶è¿”å›çª—å£æœ€åä¸€å¸§ï¼ˆå½“å‰å¸§ï¼‰åˆ°ç¬¬lå¸§ï¼ˆå‚è€ƒå¸§ï¼‰çš„Rt
             if(average_parallax * 460 > 30 && m_estimator.solveRelativeRT(corres, relative_R, relative_T))
             {
                 l = i;
@@ -584,7 +584,7 @@ bool Estimator::relativePose(Matrix3d &relative_R, Vector3d &relative_T, int &l)
     return false;
 }
 
-//Èı½Ç»¯Çó½âËùÓĞÌØÕ÷µãµÄÉî¶È£¬²¢½øĞĞ·ÇÏßĞÔÓÅ»¯
+//ä¸‰è§’åŒ–æ±‚è§£æ‰€æœ‰ç‰¹å¾ç‚¹çš„æ·±åº¦ï¼Œå¹¶è¿›è¡Œéçº¿æ€§ä¼˜åŒ–
 void Estimator::solveOdometry()
 {
     if (frame_count < WINDOW_SIZE)
@@ -598,8 +598,8 @@ void Estimator::solveOdometry()
     }
 }
 
-//vector×ª»»³ÉdoubleÊı×é£¬ÒòÎªceresÊ¹ÓÃÊıÖµÊı×é
-//Ps¡¢Rs×ª±ä³Épara_Pose£¬Vs¡¢Bas¡¢Bgs×ª±ä³Épara_SpeedBias
+//vectorè½¬æ¢æˆdoubleæ•°ç»„ï¼Œå› ä¸ºceresä½¿ç”¨æ•°å€¼æ•°ç»„
+//Psã€Rsè½¬å˜æˆpara_Poseï¼ŒVsã€Basã€Bgsè½¬å˜æˆpara_SpeedBias
 void Estimator::vector2double()
 {
     for (int i = 0; i <= WINDOW_SIZE; i++)
@@ -644,11 +644,11 @@ void Estimator::vector2double()
         para_Td[0][0] = td;
 }
 
-// Êı¾İ×ª»»£¬vector2doubleµÄÏà·´¹ı³Ì
-// Í¬Ê±ÕâÀïÎª·ÀÖ¹ÓÅ»¯½á¹ûÍùÁã¿Õ¼ä±ä»¯£¬»á¸ù¾İÓÅ»¯Ç°ºóµÚÒ»Ö¡µÄÎ»×Ë²î½øĞĞĞŞÕı¡£
+// æ•°æ®è½¬æ¢ï¼Œvector2doubleçš„ç›¸åè¿‡ç¨‹
+// åŒæ—¶è¿™é‡Œä¸ºé˜²æ­¢ä¼˜åŒ–ç»“æœå¾€é›¶ç©ºé—´å˜åŒ–ï¼Œä¼šæ ¹æ®ä¼˜åŒ–å‰åç¬¬ä¸€å¸§çš„ä½å§¿å·®è¿›è¡Œä¿®æ­£ã€‚
 void Estimator::double2vector()
 {
-    // ´°¿ÚµÚÒ»Ö¡Ö®Ç°µÄÎ»×Ë
+    // çª—å£ç¬¬ä¸€å¸§ä¹‹å‰çš„ä½å§¿
     Vector3d origin_R0 = Utility::R2ypr(Rs[0]);
     Vector3d origin_P0 = Ps[0];
 
@@ -659,12 +659,12 @@ void Estimator::double2vector()
         failure_occur = 0;
     }
 
-    // ÓÅ»¯ºóµÄÎ»×Ë
+    // ä¼˜åŒ–åçš„ä½å§¿
     Vector3d origin_R00 = Utility::R2ypr(Quaterniond(para_Pose[0][6],
                                                       para_Pose[0][3],
                                                       para_Pose[0][4],
                                                       para_Pose[0][5]).toRotationMatrix());
-    // ÇóµÃÓÅ»¯Ç°ºóµÄ×ËÌ¬²î
+    // æ±‚å¾—ä¼˜åŒ–å‰åçš„å§¿æ€å·®
     double y_diff = origin_R0.x() - origin_R00.x();
     //TODO
     Matrix3d rot_diff = Utility::ypr2R(Vector3d(y_diff, 0, 0));
@@ -676,7 +676,7 @@ void Estimator::double2vector()
                                        para_Pose[0][4],
                                        para_Pose[0][5]).toRotationMatrix().transpose();
     }
-    // ¸ù¾İÎ»×Ë²î×öĞŞÕı£¬¼´±£Ö¤µÚÒ»Ö¡ÓÅ»¯Ç°ºóÎ»×Ë²»±ä
+    // æ ¹æ®ä½å§¿å·®åšä¿®æ­£ï¼Œå³ä¿è¯ç¬¬ä¸€å¸§ä¼˜åŒ–å‰åä½å§¿ä¸å˜
     for (int i = 0; i <= WINDOW_SIZE; i++)
     {
 
@@ -741,17 +741,17 @@ void Estimator::double2vector()
     }
 }
 
-//ÏµÍ³¹ÊÕÏ¼ì²â -> Paper VI-G
+//ç³»ç»Ÿæ•…éšœæ£€æµ‹ -> Paper VI-G
 bool Estimator::failureDetection()
 {
-    //ÔÚ×îĞÂÖ¡ÖĞ¸ú×ÙµÄÌØÕ÷ÊıĞ¡ÓÚÄ³Ò»ãĞÖµ
+    //åœ¨æœ€æ–°å¸§ä¸­è·Ÿè¸ªçš„ç‰¹å¾æ•°å°äºæŸä¸€é˜ˆå€¼
     if (f_manager.last_track_num < 2)
     {
         ROS_INFO(" little feature %d", f_manager.last_track_num);
         //return true;
     }
 
-    //Æ«ÖÃ»òÍâ²¿²ÎÊı¹À¼ÆÓĞ½Ï´óµÄ±ä»¯
+    //åç½®æˆ–å¤–éƒ¨å‚æ•°ä¼°è®¡æœ‰è¾ƒå¤§çš„å˜åŒ–
     if (Bas[WINDOW_SIZE].norm() > 2.5)
     {
         ROS_INFO(" big IMU acc bias estimation %f", Bas[WINDOW_SIZE].norm());
@@ -770,7 +770,7 @@ bool Estimator::failureDetection()
     }
     */
 
-    //×î½üÁ½¸ö¹À¼ÆÆ÷Êä³öÖ®¼äµÄÎ»ÖÃ»òĞı×ªÓĞ½Ï´óµÄ²»Á¬ĞøĞÔ
+    //æœ€è¿‘ä¸¤ä¸ªä¼°è®¡å™¨è¾“å‡ºä¹‹é—´çš„ä½ç½®æˆ–æ—‹è½¬æœ‰è¾ƒå¤§çš„ä¸è¿ç»­æ€§
     Vector3d tmp_P = Ps[WINDOW_SIZE];
     if ((tmp_P - last_P).norm() > 5)
     {
@@ -797,10 +797,10 @@ bool Estimator::failureDetection()
 
 
 /**
- * @brief   »ùÓÚ»¬¶¯´°¿Ú½ôñîºÏµÄ·ÇÏßĞÔÓÅ»¯£¬²Ğ²îÏîµÄ¹¹ÔìºÍÇó½â
- * @Description Ìí¼ÓÒªÓÅ»¯µÄ±äÁ¿ (p,v,q,ba,bg) Ò»¹²15¸ö×ÔÓÉ¶È£¬IMUµÄÍâ²ÎÒ²¿ÉÒÔ¼Ó½øÀ´
- *              Ìí¼Ó²Ğ²î£¬²Ğ²îÏî·ÖÎª4¿é ÏÈÑé²Ğ²î+IMU²Ğ²î+ÊÓ¾õ²Ğ²î+±Õ»·¼ì²â²Ğ²î
- *              ¸ù¾İµ¹ÊıµÚ¶şÖ¡ÊÇ²»ÊÇ¹Ø¼üÖ¡È·¶¨±ßÔµ»¯µÄ½á¹û           
+ * @brief   åŸºäºæ»‘åŠ¨çª—å£ç´§è€¦åˆçš„éçº¿æ€§ä¼˜åŒ–ï¼Œæ®‹å·®é¡¹çš„æ„é€ å’Œæ±‚è§£
+ * @Description æ·»åŠ è¦ä¼˜åŒ–çš„å˜é‡ (p,v,q,ba,bg) ä¸€å…±15ä¸ªè‡ªç”±åº¦ï¼ŒIMUçš„å¤–å‚ä¹Ÿå¯ä»¥åŠ è¿›æ¥
+ *              æ·»åŠ æ®‹å·®ï¼Œæ®‹å·®é¡¹åˆ†ä¸º4å— å…ˆéªŒæ®‹å·®+IMUæ®‹å·®+è§†è§‰æ®‹å·®+é—­ç¯æ£€æµ‹æ®‹å·®
+ *              æ ¹æ®å€’æ•°ç¬¬äºŒå¸§æ˜¯ä¸æ˜¯å…³é”®å¸§ç¡®å®šè¾¹ç¼˜åŒ–çš„ç»“æœ           
  * @return      void
 */
 void Estimator::optimization()
@@ -810,9 +810,9 @@ void Estimator::optimization()
     //loss_function = new ceres::HuberLoss(1.0);
     loss_function = new ceres::CauchyLoss(1.0);
     
-    //Ìí¼Óceres²ÎÊı¿é
-    //ÒòÎªceresÓÃµÄÊÇdoubleÊı×é£¬ËùÒÔÔÚÏÂÃæÓÃvector2double×öÀàĞÍ×°»»
-    //Ps¡¢Rs×ª±ä³Épara_Pose£¬Vs¡¢Bas¡¢Bgs×ª±ä³Épara_SpeedBias
+    //æ·»åŠ cereså‚æ•°å—
+    //å› ä¸ºceresç”¨çš„æ˜¯doubleæ•°ç»„ï¼Œæ‰€ä»¥åœ¨ä¸‹é¢ç”¨vector2doubleåšç±»å‹è£…æ¢
+    //Psã€Rsè½¬å˜æˆpara_Poseï¼ŒVsã€Basã€Bgsè½¬å˜æˆpara_SpeedBias
     for (int i = 0; i < WINDOW_SIZE + 1; i++)
     {
         ceres::LocalParameterization *local_parameterization = new PoseLocalParameterization();
@@ -820,7 +820,7 @@ void Estimator::optimization()
         problem.AddParameterBlock(para_SpeedBias[i], SIZE_SPEEDBIAS);
     }
 
-    //ESTIMATE_EXTRINSIC!=0Ôòcameraµ½IMUµÄÍâ²ÎÒ²Ìí¼Óµ½¹À¼Æ
+    //ESTIMATE_EXTRINSIC!=0åˆ™cameraåˆ°IMUçš„å¤–å‚ä¹Ÿæ·»åŠ åˆ°ä¼°è®¡
     for (int i = 0; i < NUM_OF_CAM; i++)
     {
         ceres::LocalParameterization *local_parameterization = new PoseLocalParameterization();
@@ -833,7 +833,7 @@ void Estimator::optimization()
         else
             ROS_DEBUG("estimate extinsic param");
     }
-    //Ïà»úºÍIMUÓ²¼ş²»Í¬²½Ê±¹À¼ÆÁ½ÕßµÄÊ±¼äÆ«²î
+    //ç›¸æœºå’ŒIMUç¡¬ä»¶ä¸åŒæ­¥æ—¶ä¼°è®¡ä¸¤è€…çš„æ—¶é—´åå·®
     if (ESTIMATE_TD)
     {
         problem.AddParameterBlock(para_Td[0], 1);
@@ -844,7 +844,7 @@ void Estimator::optimization()
 
     vector2double();
 
-    //Ìí¼Ó±ßÔµ»¯²Ğ²î
+    //æ·»åŠ è¾¹ç¼˜åŒ–æ®‹å·®
     if (last_marginalization_info)
     {
         // construct new marginlization_factor
@@ -853,7 +853,7 @@ void Estimator::optimization()
                                  last_marginalization_parameter_blocks);
     }
 
-    //Ìí¼ÓIMU²Ğ²î
+    //æ·»åŠ IMUæ®‹å·®
     for (int i = 0; i < WINDOW_SIZE; i++)
     {
         int j = i + 1;
@@ -865,7 +865,7 @@ void Estimator::optimization()
     int f_m_cnt = 0;
     int feature_index = -1;
 
-    //Ìí¼ÓÊÓ¾õ²Ğ²î
+    //æ·»åŠ è§†è§‰æ®‹å·®
     for (auto &it_per_id : f_manager.feature)
     {
         it_per_id.used_num = it_per_id.feature_per_frame.size();
@@ -914,7 +914,7 @@ void Estimator::optimization()
     ROS_DEBUG("visual measurement count: %d", f_m_cnt);
     ROS_DEBUG("prepare for ceres: %f", t_prepare.toc());
 
-    //Ìí¼Ó±Õ»·¼ì²â²Ğ²î£¬¼ÆËã»¬¶¯´°¿ÚÖĞÓëÃ¿Ò»¸ö±Õ»·¹Ø¼üÖ¡µÄÏà¶ÔÎ»×Ë£¬Õâ¸öÏà¶ÔÎ»ÖÃÊÇÎªºóÃæµÄÍ¼ÓÅ»¯×¼±¸
+    //æ·»åŠ é—­ç¯æ£€æµ‹æ®‹å·®ï¼Œè®¡ç®—æ»‘åŠ¨çª—å£ä¸­ä¸æ¯ä¸€ä¸ªé—­ç¯å…³é”®å¸§çš„ç›¸å¯¹ä½å§¿ï¼Œè¿™ä¸ªç›¸å¯¹ä½ç½®æ˜¯ä¸ºåé¢çš„å›¾ä¼˜åŒ–å‡†å¤‡
     if(relocalization_info)
     {
         //printf("set relocalization factor! \n");
@@ -969,19 +969,19 @@ void Estimator::optimization()
     ROS_DEBUG("Iterations : %d", static_cast<int>(summary.iterations.size()));
     ROS_DEBUG("solver costs: %f", t_solver.toc());
 
-    // ·ÀÖ¹ÓÅ»¯½á¹ûÔÚÁã¿Õ¼ä±ä»¯£¬Í¨¹ı¹Ì¶¨µÚÒ»Ö¡µÄÎ»×Ë
+    // é˜²æ­¢ä¼˜åŒ–ç»“æœåœ¨é›¶ç©ºé—´å˜åŒ–ï¼Œé€šè¿‡å›ºå®šç¬¬ä¸€å¸§çš„ä½å§¿
     double2vector();
 
     TicToc t_whole_marginalization;
 
-    //±ßÔµ»¯´¦Àí
-    //Èç¹û´ÎĞÂÖ¡ÊÇ¹Ø¼üÖ¡£¬½«±ßÔµ»¯×îÀÏÖ¡£¬¼°Æä¿´µ½µÄÂ·±êµãºÍIMUÊı¾İ£¬½«Æä×ª»¯ÎªÏÈÑé£º  
+    //è¾¹ç¼˜åŒ–å¤„ç†
+    //å¦‚æœæ¬¡æ–°å¸§æ˜¯å…³é”®å¸§ï¼Œå°†è¾¹ç¼˜åŒ–æœ€è€å¸§ï¼ŒåŠå…¶çœ‹åˆ°çš„è·¯æ ‡ç‚¹å’ŒIMUæ•°æ®ï¼Œå°†å…¶è½¬åŒ–ä¸ºå…ˆéªŒï¼š  
     if (marginalization_flag == MARGIN_OLD)
     {
         MarginalizationInfo *marginalization_info = new MarginalizationInfo();
         vector2double();
 
-        //1¡¢½«ÉÏÒ»´ÎÏÈÑé²Ğ²îÏî´«µİ¸ømarginalization_info
+        //1ã€å°†ä¸Šä¸€æ¬¡å…ˆéªŒæ®‹å·®é¡¹ä¼ é€’ç»™marginalization_info
         if (last_marginalization_info)
         {
             vector<int> drop_set;
@@ -1000,7 +1000,7 @@ void Estimator::optimization()
             marginalization_info->addResidualBlockInfo(residual_block_info);
         }
 
-        //2¡¢½«µÚ0Ö¡ºÍµÚ1Ö¡¼äµÄIMUÒò×ÓIMUFactor(pre_integrations[1])£¬Ìí¼Óµ½marginalization_infoÖĞ
+        //2ã€å°†ç¬¬0å¸§å’Œç¬¬1å¸§é—´çš„IMUå› å­IMUFactor(pre_integrations[1])ï¼Œæ·»åŠ åˆ°marginalization_infoä¸­
         {
             if (pre_integrations[1]->sum_dt < 10.0)
             {
@@ -1012,7 +1012,7 @@ void Estimator::optimization()
             }
         }
 
-        //3¡¢½«µÚÒ»´Î¹Û²âÎªµÚ0Ö¡µÄËùÓĞÂ·±êµã¶ÔÓ¦µÄÊÓ¾õ¹Û²â£¬Ìí¼Óµ½marginalization_infoÖĞ
+        //3ã€å°†ç¬¬ä¸€æ¬¡è§‚æµ‹ä¸ºç¬¬0å¸§çš„æ‰€æœ‰è·¯æ ‡ç‚¹å¯¹åº”çš„è§†è§‰è§‚æµ‹ï¼Œæ·»åŠ åˆ°marginalization_infoä¸­
         {
             int feature_index = -1;
             for (auto &it_per_id : f_manager.feature)
@@ -1061,17 +1061,17 @@ void Estimator::optimization()
         TicToc t_pre_margin;
 
     
-        //4¡¢¼ÆËãÃ¿¸ö²Ğ²î£¬¶ÔÓ¦µÄJacobian£¬²¢½«¸÷²ÎÊı¿é¿½±´µ½Í³Ò»µÄÄÚ´æ£¨parameter_block_data£©ÖĞ
+        //4ã€è®¡ç®—æ¯ä¸ªæ®‹å·®ï¼Œå¯¹åº”çš„Jacobianï¼Œå¹¶å°†å„å‚æ•°å—æ‹·è´åˆ°ç»Ÿä¸€çš„å†…å­˜ï¼ˆparameter_block_dataï¼‰ä¸­
         marginalization_info->preMarginalize();
         ROS_DEBUG("pre marginalization %f ms", t_pre_margin.toc());
         
         TicToc t_margin;
 
-        //5¡¢¶àÏß³Ì¹¹ÔìÏÈÑéÏîÊæ¶û²¹AX=bµÄ½á¹¹£¬ÔÚX0´¦ÏßĞÔ»¯¼ÆËãJacobianºÍ²Ğ²î
+        //5ã€å¤šçº¿ç¨‹æ„é€ å…ˆéªŒé¡¹èˆ’å°”è¡¥AX=bçš„ç»“æ„ï¼Œåœ¨X0å¤„çº¿æ€§åŒ–è®¡ç®—Jacobianå’Œæ®‹å·®
         marginalization_info->marginalize();
         ROS_DEBUG("marginalization %f ms", t_margin.toc());
 
-        //6.µ÷Õû²ÎÊı¿éÔÚÏÂÒ»´Î´°¿ÚÖĞ¶ÔÓ¦µÄÎ»ÖÃ£¨ÍùÇ°ÒÆÒ»¸ñ£©£¬×¢ÒâÕâÀïÊÇÖ¸Õë£¬ºóÃæslideWindowÖĞ»á¸³ĞÂÖµ£¬ÕâÀïÖ»ÊÇÌáÇ°Õ¼×ù
+        //6.è°ƒæ•´å‚æ•°å—åœ¨ä¸‹ä¸€æ¬¡çª—å£ä¸­å¯¹åº”çš„ä½ç½®ï¼ˆå¾€å‰ç§»ä¸€æ ¼ï¼‰ï¼Œæ³¨æ„è¿™é‡Œæ˜¯æŒ‡é’ˆï¼Œåé¢slideWindowä¸­ä¼šèµ‹æ–°å€¼ï¼Œè¿™é‡Œåªæ˜¯æå‰å åº§
         std::unordered_map<long, double *> addr_shift;
         for (int i = 1; i <= WINDOW_SIZE; i++)
         {
@@ -1093,13 +1093,13 @@ void Estimator::optimization()
         
     }
 
-    //Èç¹û´ÎĞÂÖ¡²»ÊÇ¹Ø¼üÖ¡£º
+    //å¦‚æœæ¬¡æ–°å¸§ä¸æ˜¯å…³é”®å¸§ï¼š
     else
     {
         if (last_marginalization_info &&
             std::count(std::begin(last_marginalization_parameter_blocks), std::end(last_marginalization_parameter_blocks), para_Pose[WINDOW_SIZE - 1]))
         {
-            //1.±£Áô´ÎĞÂÖ¡µÄIMU²âÁ¿£¬¶ªÆú¸ÃÖ¡µÄÊÓ¾õ²âÁ¿£¬½«ÉÏÒ»´ÎÏÈÑé²Ğ²îÏî´«µİ¸ømarginalization_info
+            //1.ä¿ç•™æ¬¡æ–°å¸§çš„IMUæµ‹é‡ï¼Œä¸¢å¼ƒè¯¥å¸§çš„è§†è§‰æµ‹é‡ï¼Œå°†ä¸Šä¸€æ¬¡å…ˆéªŒæ®‹å·®é¡¹ä¼ é€’ç»™marginalization_info
             MarginalizationInfo *marginalization_info = new MarginalizationInfo();
             vector2double();
             if (last_marginalization_info)
@@ -1120,19 +1120,19 @@ void Estimator::optimization()
                 marginalization_info->addResidualBlockInfo(residual_block_info);
             }
 
-            //2¡¢premargin
+            //2ã€premargin
             TicToc t_pre_margin;
             ROS_DEBUG("begin marginalization");
             marginalization_info->preMarginalize();
             ROS_DEBUG("end pre marginalization, %f ms", t_pre_margin.toc());
 
-            //3¡¢marginalize
+            //3ã€marginalize
             TicToc t_margin;
             ROS_DEBUG("begin marginalization");
             marginalization_info->marginalize();
             ROS_DEBUG("end marginalization, %f ms", t_margin.toc());
             
-            //4.µ÷Õû²ÎÊı¿éÔÚÏÂÒ»´Î´°¿ÚÖĞ¶ÔÓ¦µÄÎ»ÖÃ£¨È¥µô´ÎĞÂÖ¡£©
+            //4.è°ƒæ•´å‚æ•°å—åœ¨ä¸‹ä¸€æ¬¡çª—å£ä¸­å¯¹åº”çš„ä½ç½®ï¼ˆå»æ‰æ¬¡æ–°å¸§ï¼‰
             std::unordered_map<long, double *> addr_shift;
             for (int i = 0; i <= WINDOW_SIZE; i++)
             {
@@ -1170,9 +1170,9 @@ void Estimator::optimization()
 }
 
 /**
- * @brief   ÊµÏÖ»¬¶¯´°¿Úall_image_frameµÄº¯Êı
- * @Description Èç¹û´ÎĞÂÖ¡ÊÇ¹Ø¼üÖ¡£¬Ôò±ßÔµ»¯×îÀÏÖ¡£¬½«Æä¿´µ½µÄÌØÕ÷µãºÍIMUÊı¾İ×ª»¯ÎªÏÈÑéĞÅÏ¢
-                Èç¹û´ÎĞÂÖ¡²»ÊÇ¹Ø¼üÖ¡£¬ÔòÉáÆúÊÓ¾õ²âÁ¿¶ø±£ÁôIMU²âÁ¿Öµ£¬´Ó¶ø±£Ö¤IMUÔ¤»ı·ÖµÄÁ¬¹áĞÔ
+ * @brief   å®ç°æ»‘åŠ¨çª—å£all_image_frameçš„å‡½æ•°
+ * @Description å¦‚æœæ¬¡æ–°å¸§æ˜¯å…³é”®å¸§ï¼Œåˆ™è¾¹ç¼˜åŒ–æœ€è€å¸§ï¼Œå°†å…¶çœ‹åˆ°çš„ç‰¹å¾ç‚¹å’ŒIMUæ•°æ®è½¬åŒ–ä¸ºå…ˆéªŒä¿¡æ¯
+                å¦‚æœæ¬¡æ–°å¸§ä¸æ˜¯å…³é”®å¸§ï¼Œåˆ™èˆå¼ƒè§†è§‰æµ‹é‡è€Œä¿ç•™IMUæµ‹é‡å€¼ï¼Œä»è€Œä¿è¯IMUé¢„ç§¯åˆ†çš„è¿è´¯æ€§
  * @return      void
 */
 void Estimator::slideWindow()
@@ -1273,7 +1273,7 @@ void Estimator::slideWindow()
     }
 }
 
-//»¬¶¯´°¿Ú±ßÔµ»¯´ÎĞÂÖ¡Ê±´¦ÀíÌØÕ÷µã±»¹Û²âµÄÖ¡ºÅ
+//æ»‘åŠ¨çª—å£è¾¹ç¼˜åŒ–æ¬¡æ–°å¸§æ—¶å¤„ç†ç‰¹å¾ç‚¹è¢«è§‚æµ‹çš„å¸§å·
 //real marginalization is removed in solve_ceres()
 void Estimator::slideWindowNew()
 {
@@ -1281,7 +1281,7 @@ void Estimator::slideWindowNew()
     f_manager.removeFront(frame_count);
 }
 
-//»¬¶¯´°¿Ú±ßÔµ»¯×îÀÏÖ¡Ê±´¦ÀíÌØÕ÷µã±»¹Û²âµÄÖ¡ºÅ
+//æ»‘åŠ¨çª—å£è¾¹ç¼˜åŒ–æœ€è€å¸§æ—¶å¤„ç†ç‰¹å¾ç‚¹è¢«è§‚æµ‹çš„å¸§å·
 //real marginalization is removed in solve_ceres()
 void Estimator::slideWindowOld()
 {
@@ -1292,8 +1292,8 @@ void Estimator::slideWindowOld()
     {
         Matrix3d R0, R1;
         Vector3d P0, P1;
-        //back_R0¡¢back_P0Îª´°¿ÚÖĞ×îÀÏÖ¡µÄÎ»×Ë
-        //Rs¡¢PsÎª»¬¶¯´°¿ÚºóµÚ0Ö¡µÄÎ»×Ë£¬¼´Ô­À´µÄµÚ1Ö¡
+        //back_R0ã€back_P0ä¸ºçª—å£ä¸­æœ€è€å¸§çš„ä½å§¿
+        //Rsã€Psä¸ºæ»‘åŠ¨çª—å£åç¬¬0å¸§çš„ä½å§¿ï¼Œå³åŸæ¥çš„ç¬¬1å¸§
         R0 = back_R0 * ric[0];
         R1 = Rs[0] * ric[0];
         P0 = back_P0 + back_R0 * tic[0];
@@ -1305,13 +1305,13 @@ void Estimator::slideWindowOld()
 }
 
 /**
- * @brief   ½øĞĞÖØ¶¨Î»
+ * @brief   è¿›è¡Œé‡å®šä½
  * @optional    
- * @param[in]   _frame_stamp    ÖØ¶¨Î»Ö¡Ê±¼ä´Á
- * @param[in]   _frame_index    ÖØ¶¨Î»Ö¡Ë÷ÒıÖµ
- * @param[in]   _match_points   ÖØ¶¨Î»Ö¡µÄËùÓĞÆ¥Åäµã
- * @param[in]   _relo_t     ÖØ¶¨Î»Ö¡Æ½ÒÆÏòÁ¿
- * @param[in]   _relo_r     ÖØ¶¨Î»Ö¡Ğı×ª¾ØÕó
+ * @param[in]   _frame_stamp    é‡å®šä½å¸§æ—¶é—´æˆ³
+ * @param[in]   _frame_index    é‡å®šä½å¸§ç´¢å¼•å€¼
+ * @param[in]   _match_points   é‡å®šä½å¸§çš„æ‰€æœ‰åŒ¹é…ç‚¹
+ * @param[in]   _relo_t     é‡å®šä½å¸§å¹³ç§»å‘é‡
+ * @param[in]   _relo_r     é‡å®šä½å¸§æ—‹è½¬çŸ©é˜µ
  * @return      void
 */
 void Estimator::setReloFrame(double _frame_stamp, int _frame_index, vector<Vector3d> &_match_points, Vector3d _relo_t, Matrix3d _relo_r)

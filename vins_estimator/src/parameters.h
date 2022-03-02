@@ -14,30 +14,30 @@ const int NUM_OF_CAM = 1;
 const int NUM_OF_F = 1000;
 //#define UNIT_SPHERE_ERROR
 
-extern double INIT_DEPTH;//Éî¶È³õÊ¼Öµ
-extern double MIN_PARALLAX;//¹Ø¼üÖ¡Ñ¡ÔñãĞÖµ£¨ÏñËØµ¥Î»£©
-extern int ESTIMATE_EXTRINSIC;//IMUºÍÏà»úµÄÍâ²ÎRt:0×¼È·£»1²»×¼È·£»2Ã»ÓĞ
+extern double INIT_DEPTH;//æ·±åº¦åˆå§‹å€¼
+extern double MIN_PARALLAX;//å…³é”®å¸§é€‰æ‹©é˜ˆå€¼ï¼ˆåƒç´ å•ä½ï¼‰
+extern int ESTIMATE_EXTRINSIC;//IMUå’Œç›¸æœºçš„å¤–å‚Rt:0å‡†ç¡®ï¼›1ä¸å‡†ç¡®ï¼›2æ²¡æœ‰
 
-//¼ÓËÙ¶È¼ÆºÍÍÓÂİÒÇÔëÉùºÍËæ»úÆ«ÖÃ±ê×¼²î
+//åŠ é€Ÿåº¦è®¡å’Œé™€èºä»ªå™ªå£°å’Œéšæœºåç½®æ ‡å‡†å·®
 extern double ACC_N, ACC_W;
 extern double GYR_N, GYR_W;
 
-extern std::vector<Eigen::Matrix3d> RIC;//´ÓÏà»úµ½IMUµÄĞı×ª¾ØÕó
-extern std::vector<Eigen::Vector3d> TIC;//´ÓÏà»úµ½IMUµÄÆ½ÒÆÏòÁ¿
-extern Eigen::Vector3d G;//ÖØÁ¦[0,0,g]
+extern std::vector<Eigen::Matrix3d> RIC;//ä»ç›¸æœºåˆ°IMUçš„æ—‹è½¬çŸ©é˜µ
+extern std::vector<Eigen::Vector3d> TIC;//ä»ç›¸æœºåˆ°IMUçš„å¹³ç§»å‘é‡
+extern Eigen::Vector3d G;//é‡åŠ›[0,0,g]
 
-extern double BIAS_ACC_THRESHOLD;//BaãĞÖµ
-extern double BIAS_GYR_THRESHOLD;//BaãĞÖµ
-extern double SOLVER_TIME;//×î´ó½âËãÊ±¼ä£¨ÒÔ±£Ö¤ÊµÊ±ĞÔ£©
-extern int NUM_ITERATIONS;//×î´ó½âËãÆ÷µü´ú´ÎÊı£¨ÒÔ±£Ö¤ÊµÊ±ĞÔ£©
-extern std::string EX_CALIB_RESULT_PATH;//Ïà»úÓëIMUÍâ²ÎµÄÊä³öÂ·¾¶OUTPUT_PATH + "/extrinsic_parameter.csv"
-extern std::string VINS_RESULT_PATH;//Êä³öÂ·¾¶OUTPUT_PATH + "/vins_result_no_loop.csv"
-extern std::string IMU_TOPIC;//IMU topicÃû"/imu0"
-extern double TD;//IMUºÍcamµÄÊ±¼ä²î. unit: s. readed image clock + td = real image clock (IMU clock)
-extern double TR;//¾íÁ±¿ìÃÅÃ¿Ö¡Ê±¼ä
-extern int ESTIMATE_TD;//ÔÚÏßĞ£×¼IMUºÍcameraÊ±¼ä
-extern int ROLLING_SHUTTER;//1£º¾íÁ±¿ìÃÅÏà»ú£»0£ºÈ«¾Ö¿ìÃÅÏà»ú
-extern double ROW, COL;//Í¼Æ¬µÄ¿íºÍ¸ß
+extern double BIAS_ACC_THRESHOLD;//Baé˜ˆå€¼
+extern double BIAS_GYR_THRESHOLD;//Baé˜ˆå€¼
+extern double SOLVER_TIME;//æœ€å¤§è§£ç®—æ—¶é—´ï¼ˆä»¥ä¿è¯å®æ—¶æ€§ï¼‰
+extern int NUM_ITERATIONS;//æœ€å¤§è§£ç®—å™¨è¿­ä»£æ¬¡æ•°ï¼ˆä»¥ä¿è¯å®æ—¶æ€§ï¼‰
+extern std::string EX_CALIB_RESULT_PATH;//ç›¸æœºä¸IMUå¤–å‚çš„è¾“å‡ºè·¯å¾„OUTPUT_PATH + "/extrinsic_parameter.csv"
+extern std::string VINS_RESULT_PATH;//è¾“å‡ºè·¯å¾„OUTPUT_PATH + "/vins_result_no_loop.csv"
+extern std::string IMU_TOPIC;//IMU topicå"/imu0"
+extern double TD;//IMUå’Œcamçš„æ—¶é—´å·®. unit: s. readed image clock + td = real image clock (IMU clock)
+extern double TR;//å·å¸˜å¿«é—¨æ¯å¸§æ—¶é—´
+extern int ESTIMATE_TD;//åœ¨çº¿æ ¡å‡†IMUå’Œcameraæ—¶é—´
+extern int ROLLING_SHUTTER;//1ï¼šå·å¸˜å¿«é—¨ç›¸æœºï¼›0ï¼šå…¨å±€å¿«é—¨ç›¸æœº
+extern double ROW, COL;//å›¾ç‰‡çš„å®½å’Œé«˜
 
 
 void readParameters(ros::NodeHandle &n);

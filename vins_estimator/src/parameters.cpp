@@ -76,9 +76,9 @@ void readParameters(ros::NodeHandle &n)
     COL = fsSettings["image_width"];
     ROS_INFO("ROW: %f COL: %f ", ROW, COL);
 
-    //IMUºÍCAMµÄÍâ²ÎÊÇ·ñÌá¹©
+    //IMUå’ŒCAMçš„å¤–å‚æ˜¯å¦æä¾›
     ESTIMATE_EXTRINSIC = fsSettings["estimate_extrinsic"];
-    if (ESTIMATE_EXTRINSIC == 2)//²»Ìá¹©
+    if (ESTIMATE_EXTRINSIC == 2)//ä¸æä¾›
     {
         ROS_WARN("have no prior about extrinsic param, calibrate extrinsic param");
         RIC.push_back(Eigen::Matrix3d::Identity());
@@ -88,15 +88,15 @@ void readParameters(ros::NodeHandle &n)
     }
     else 
     {
-        if ( ESTIMATE_EXTRINSIC == 1)//²»×¼È·
+        if ( ESTIMATE_EXTRINSIC == 1)//ä¸å‡†ç¡®
         {
             ROS_WARN(" Optimize extrinsic param around initial guess!");
             EX_CALIB_RESULT_PATH = OUTPUT_PATH + "/extrinsic_parameter.csv";
         }
-        if (ESTIMATE_EXTRINSIC == 0)//×¼È·
+        if (ESTIMATE_EXTRINSIC == 0)//å‡†ç¡®
             ROS_WARN(" fix extrinsic param ");
 
-        //¶ÁÈ¡³õÊ¼R,t´æÈë¸÷×Ôvector
+        //è¯»å–åˆå§‹R,tå­˜å…¥å„è‡ªvector
         cv::Mat cv_R, cv_T;
         fsSettings["extrinsicRotation"] >> cv_R;
         fsSettings["extrinsicTranslation"] >> cv_T;
@@ -105,7 +105,7 @@ void readParameters(ros::NodeHandle &n)
         cv::cv2eigen(cv_R, eigen_R);
         cv::cv2eigen(cv_T, eigen_T);
         Eigen::Quaterniond Q(eigen_R);
-        eigen_R = Q.normalized();//¹éÒ»»¯
+        eigen_R = Q.normalized();//å½’ä¸€åŒ–
         RIC.push_back(eigen_R);
         TIC.push_back(eigen_T);
         ROS_INFO_STREAM("Extrinsic_R : " << std::endl << RIC[0]);
@@ -117,7 +117,7 @@ void readParameters(ros::NodeHandle &n)
     BIAS_ACC_THRESHOLD = 0.1;
     BIAS_GYR_THRESHOLD = 0.1;
 
-    //IMUºÍcamÊ±¼äÐ£×¼
+    //IMUå’Œcamæ—¶é—´æ ¡å‡†
     TD = fsSettings["td"];
     ESTIMATE_TD = fsSettings["estimate_td"];
     if (ESTIMATE_TD)

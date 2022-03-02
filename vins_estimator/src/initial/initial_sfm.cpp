@@ -2,7 +2,7 @@
 
 GlobalSFM::GlobalSFM(){}
 
-//Èı½Ç»¯Á½Ö¡¼äÄ³¸ö¶ÔÓ¦ÌØÕ÷µãµÄÉî¶È
+//ä¸‰è§’åŒ–ä¸¤å¸§é—´æŸä¸ªå¯¹åº”ç‰¹å¾ç‚¹çš„æ·±åº¦
 void GlobalSFM::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen::Matrix<double, 3, 4> &Pose1,
 						Vector2d &point0, Vector2d &point1, Vector3d &point_3d)
 {
@@ -19,7 +19,7 @@ void GlobalSFM::triangulatePoint(Eigen::Matrix<double, 3, 4> &Pose0, Eigen::Matr
 	point_3d(2) = triangulated_point(2) / triangulated_point(3);
 }
 
-//PNP·½·¨µÃµ½µÚlÖ¡µ½µÚiÖ¡µÄR_initial¡¢P_initial
+//PNPæ–¹æ³•å¾—åˆ°ç¬¬lå¸§åˆ°ç¬¬iå¸§çš„R_initialã€P_initial
 bool GlobalSFM::solveFrameByPnP(Matrix3d &R_initial, Vector3d &P_initial, int i,
 								vector<SFMFeature> &sfm_f)
 {
@@ -72,7 +72,7 @@ bool GlobalSFM::solveFrameByPnP(Matrix3d &R_initial, Vector3d &P_initial, int i,
 
 }
 
-//Èı½Ç»¯frame0ºÍframe1¼äËùÓĞ¶ÔÓ¦µã
+//ä¸‰è§’åŒ–frame0å’Œframe1é—´æ‰€æœ‰å¯¹åº”ç‚¹
 void GlobalSFM::triangulateTwoFrames(int frame0, Eigen::Matrix<double, 3, 4> &Pose0, 
 									 int frame1, Eigen::Matrix<double, 3, 4> &Pose1,
 									 vector<SFMFeature> &sfm_f)
@@ -112,16 +112,16 @@ void GlobalSFM::triangulateTwoFrames(int frame0, Eigen::Matrix<double, 3, 4> &Po
 }
 
 /**
- * @brief   ´¿ÊÓ¾õsfm£¬Çó½â´°¿ÚÖĞµÄËùÓĞÍ¼ÏñÖ¡µÄÎ»×ËºÍÌØÕ÷µã×ø±ê
- * @param[in]   frame_num	´°¿Ú×ÜÖ¡Êı£¨frame_count + 1£©
- * @param[out]  q 	´°¿ÚÄÚÍ¼ÏñÖ¡µÄĞı×ªËÄÔªÊıq£¨Ïà¶ÔÓÚµÚlÖ¡£©
- * @param[out]	T 	´°¿ÚÄÚÍ¼ÏñÖ¡µÄÆ½ÒÆÏòÁ¿T£¨Ïà¶ÔÓÚµÚlÖ¡£©
- * @param[in]  	l 	µÚlÖ¡
- * @param[in]  	relative_R	µ±Ç°Ö¡µ½µÚlÖ¡µÄĞı×ª¾ØÕó
- * @param[in]  	relative_T 	µ±Ç°Ö¡µ½µÚlÖ¡µÄÆ½ÒÆÏòÁ¿
- * @param[in]  	sfm_f		ËùÓĞÌØÕ÷µã
- * @param[out]  sfm_tracked_points ËùÓĞÔÚsfmÖĞÈı½Ç»¯µÄÌØÕ÷µãIDºÍ×ø±ê
- * @return  bool true:sfmÇó½â³É¹¦
+ * @brief   çº¯è§†è§‰sfmï¼Œæ±‚è§£çª—å£ä¸­çš„æ‰€æœ‰å›¾åƒå¸§çš„ä½å§¿å’Œç‰¹å¾ç‚¹åæ ‡
+ * @param[in]   frame_num	çª—å£æ€»å¸§æ•°ï¼ˆframe_count + 1ï¼‰
+ * @param[out]  q 	çª—å£å†…å›¾åƒå¸§çš„æ—‹è½¬å››å…ƒæ•°qï¼ˆç›¸å¯¹äºç¬¬lå¸§ï¼‰
+ * @param[out]	T 	çª—å£å†…å›¾åƒå¸§çš„å¹³ç§»å‘é‡Tï¼ˆç›¸å¯¹äºç¬¬lå¸§ï¼‰
+ * @param[in]  	l 	ç¬¬lå¸§
+ * @param[in]  	relative_R	å½“å‰å¸§åˆ°ç¬¬lå¸§çš„æ—‹è½¬çŸ©é˜µ
+ * @param[in]  	relative_T 	å½“å‰å¸§åˆ°ç¬¬lå¸§çš„å¹³ç§»å‘é‡
+ * @param[in]  	sfm_f		æ‰€æœ‰ç‰¹å¾ç‚¹
+ * @param[out]  sfm_tracked_points æ‰€æœ‰åœ¨sfmä¸­ä¸‰è§’åŒ–çš„ç‰¹å¾ç‚¹IDå’Œåæ ‡
+ * @return  bool true:sfmæ±‚è§£æˆåŠŸ
 */
 bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 			  const Matrix3d relative_R, const Vector3d relative_T,
@@ -129,7 +129,7 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 {
 	feature_num = sfm_f.size();
 	//cout << "set 0 and " << l << " as known " << endl;
-	//¼ÙÉèµÚlÖ¡ÎªÔ­µã£¬¸ù¾İµ±Ç°Ö¡µ½µÚlÖ¡µÄrelative_R£¬relative_T£¬µÃµ½µ±Ç°Ö¡Î»×Ë
+	//å‡è®¾ç¬¬lå¸§ä¸ºåŸç‚¹ï¼Œæ ¹æ®å½“å‰å¸§åˆ°ç¬¬lå¸§çš„relative_Rï¼Œrelative_Tï¼Œå¾—åˆ°å½“å‰å¸§ä½å§¿
 	q[l].w() = 1;
 	q[l].x() = 0;
 	q[l].y() = 0;
@@ -147,7 +147,7 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 	double c_rotation[frame_num][4];
 	double c_translation[frame_num][3];
 	Eigen::Matrix<double, 3, 4> Pose[frame_num];
-	//ÕâÀïµÄpose±íÊ¾µÄÊÇµÚlÖ¡µ½Ã¿Ò»Ö¡µÄ±ä»»¾ØÕó
+	//è¿™é‡Œçš„poseè¡¨ç¤ºçš„æ˜¯ç¬¬lå¸§åˆ°æ¯ä¸€å¸§çš„å˜æ¢çŸ©é˜µ
 
 	c_Quat[l] = q[l].inverse();
 	c_Rotation[l] = c_Quat[l].toRotationMatrix();
@@ -162,9 +162,9 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 	Pose[frame_num - 1].block<3, 1>(0, 3) = c_Translation[frame_num - 1];
 
 
-	//1¡¢ÏÈÈı½Ç»¯µÚlÖ¡£¨²Î¿¼Ö¡£©ÓëµÚframe_num-1Ö¡£¨µ±Ç°Ö¡£©µÄÂ·±êµã
-	//2¡¢pnpÇó½â´ÓµÚl+1¿ªÊ¼µÄÃ¿Ò»Ö¡µ½µÚlÖ¡µÄ±ä»»¾ØÕóR_initial, P_initial£¬±£´æÔÚPoseÖĞ
-	//²¢Óëµ±Ç°Ö¡½øĞĞÈı½Ç»¯
+	//1ã€å…ˆä¸‰è§’åŒ–ç¬¬lå¸§ï¼ˆå‚è€ƒå¸§ï¼‰ä¸ç¬¬frame_num-1å¸§ï¼ˆå½“å‰å¸§ï¼‰çš„è·¯æ ‡ç‚¹
+	//2ã€pnpæ±‚è§£ä»ç¬¬l+1å¼€å§‹çš„æ¯ä¸€å¸§åˆ°ç¬¬lå¸§çš„å˜æ¢çŸ©é˜µR_initial, P_initialï¼Œä¿å­˜åœ¨Poseä¸­
+	//å¹¶ä¸å½“å‰å¸§è¿›è¡Œä¸‰è§’åŒ–
 	for (int i = l; i < frame_num - 1 ; i++)
 	{
 		if (i > l)
@@ -184,12 +184,12 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 		triangulateTwoFrames(i, Pose[i], frame_num - 1, Pose[frame_num - 1], sfm_f);
 	}
 
-	//3¡¢¶ÔµÚlÖ¡ÓëµÚl+1µ½frame_num -2µÄÃ¿Ò»Ö¡ÔÙ½øĞĞÈı½Ç»¯
+	//3ã€å¯¹ç¬¬lå¸§ä¸ç¬¬l+1åˆ°frame_num -2çš„æ¯ä¸€å¸§å†è¿›è¡Œä¸‰è§’åŒ–
 	for (int i = l + 1; i < frame_num - 1; i++)
 		triangulateTwoFrames(l, Pose[l], i, Pose[i], sfm_f);
 
 
-	//4¡¢PNPÇó½â´ÓµÚl-1µ½µÚ0Ö¡µÄÃ¿Ò»Ö¡ÓëµÚlÖ¡Ö®¼äµÄ±ä»»¾ØÕó£¬²¢½øĞĞÈı½Ç»¯
+	//4ã€PNPæ±‚è§£ä»ç¬¬l-1åˆ°ç¬¬0å¸§çš„æ¯ä¸€å¸§ä¸ç¬¬lå¸§ä¹‹é—´çš„å˜æ¢çŸ©é˜µï¼Œå¹¶è¿›è¡Œä¸‰è§’åŒ–
 	for (int i = l - 1; i >= 0; i--)
 	{
 		//solve pnp
@@ -206,8 +206,8 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 		triangulateTwoFrames(i, Pose[i], l, Pose[l], sfm_f);
 	}
 
-	//5¡¢Èı½Ç»¯ÆäËûÎ´»Ö¸´µÄÌØÕ÷µã¡£
-	//ÖÁ´ËµÃµ½ÁË»¬¶¯´°¿ÚÖĞËùÓĞÍ¼ÏñÖ¡µÄÎ»×ËÒÔ¼°ÌØÕ÷µãµÄ3d×ø±ê
+	//5ã€ä¸‰è§’åŒ–å…¶ä»–æœªæ¢å¤çš„ç‰¹å¾ç‚¹ã€‚
+	//è‡³æ­¤å¾—åˆ°äº†æ»‘åŠ¨çª—å£ä¸­æ‰€æœ‰å›¾åƒå¸§çš„ä½å§¿ä»¥åŠç‰¹å¾ç‚¹çš„3dåæ ‡
 	for (int j = 0; j < feature_num; j++)
 	{
 		if (sfm_f[j].state == true)
@@ -243,7 +243,7 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 	}
 */
 
-	//6¡¢Ê¹ÓÃcares½øĞĞÈ«¾ÖBAÓÅ»¯
+	//6ã€ä½¿ç”¨caresè¿›è¡Œå…¨å±€BAä¼˜åŒ–
 	ceres::Problem problem;
 	ceres::LocalParameterization* local_parameterization = new ceres::QuaternionParameterization();
 	//cout << " begin full BA " << endl;
@@ -302,7 +302,7 @@ bool GlobalSFM::construct(int frame_num, Quaterniond* q, Vector3d* T, int l,
 		return false;
 	}
 	
-	//ÕâÀïµÃµ½µÄÊÇµÚlÖ¡×ø±êÏµµ½¸÷Ö¡µÄ±ä»»¾ØÕó£¬Ó¦½«Æä×ª±äÎª¸÷Ö¡ÔÚµÚlÖ¡×ø±êÏµÉÏµÄÎ»×Ë
+	//è¿™é‡Œå¾—åˆ°çš„æ˜¯ç¬¬lå¸§åæ ‡ç³»åˆ°å„å¸§çš„å˜æ¢çŸ©é˜µï¼Œåº”å°†å…¶è½¬å˜ä¸ºå„å¸§åœ¨ç¬¬lå¸§åæ ‡ç³»ä¸Šçš„ä½å§¿
 	for (int i = 0; i < frame_num; i++)
 	{
 		q[i].w() = c_rotation[i][0]; 

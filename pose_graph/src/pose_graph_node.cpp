@@ -24,9 +24,9 @@
 #define SKIP_FIRST_CNT 10
 using namespace std;
 
-queue<sensor_msgs::ImageConstPtr> image_buf;//Ô­Ê¼Í¼ÏñÊı¾İ
-queue<sensor_msgs::PointCloudConstPtr> point_buf;//ÊÀ½ç×ø±êÏµÏÂµÄµØÍ¼µãÔÆ
-queue<nav_msgs::Odometry::ConstPtr> pose_buf;//µ±Ç°Ö¡µÄ pose
+queue<sensor_msgs::ImageConstPtr> image_buf;//åŸå§‹å›¾åƒæ•°æ®
+queue<sensor_msgs::PointCloudConstPtr> point_buf;//ä¸–ç•Œåæ ‡ç³»ä¸‹çš„åœ°å›¾ç‚¹äº‘
+queue<nav_msgs::Odometry::ConstPtr> pose_buf;//å½“å‰å¸§çš„ pose
 queue<Eigen::Vector3d> odometry_buf;
 
 
@@ -34,7 +34,7 @@ std::mutex m_buf;
 std::mutex m_process;
 int frame_index  = 0;
 int sequence = 1;
-//¹¹½¨Î»×ËÍ¼ÓÅ»¯Àà
+//æ„å»ºä½å§¿å›¾ä¼˜åŒ–ç±»
 PoseGraph posegraph;
 
 int skip_first_cnt = 0;
@@ -70,7 +70,7 @@ CameraPoseVisualization cameraposevisual(1, 0, 0, 1);
 Eigen::Vector3d last_t(-100, -100, -100);
 double last_image_time = -1;
 
-//¿ªÊ¼Ò»¸öĞÂµÄÍ¼ÏñĞòÁĞ£¨µØÍ¼ºÏ²¢¹¦ÄÜ£©
+//å¼€å§‹ä¸€ä¸ªæ–°çš„å›¾åƒåºåˆ—ï¼ˆåœ°å›¾åˆå¹¶åŠŸèƒ½ï¼‰
 void new_sequence()
 {
     printf("new sequence\n");
@@ -81,7 +81,7 @@ void new_sequence()
         ROS_WARN("only support 5 sequences since it's boring to copy code for more sequences.");
         ROS_BREAK();
     }
-    //ÖØĞÂ³õÊ¼»¯£¬ÖØĞÂ¹¹½¨µØÍ¼¡£
+    //é‡æ–°åˆå§‹åŒ–ï¼Œé‡æ–°æ„å»ºåœ°å›¾ã€‚
     posegraph.posegraph_visualization->reset();
     posegraph.publish();
     m_buf.lock();
@@ -96,7 +96,7 @@ void new_sequence()
     m_buf.unlock();
 }
 
-//Í¼ÏñÊı¾İ»Øµ÷º¯Êı£¬½«image_msg·ÅÈëimage_buf£¬Í¬Ê±¸ù¾İÊ±¼ä´Á¼ì²âÊÇ·ñÊÇĞÂµÄÍ¼ÏñĞòÁĞ
+//å›¾åƒæ•°æ®å›è°ƒå‡½æ•°ï¼Œå°†image_msgæ”¾å…¥image_bufï¼ŒåŒæ—¶æ ¹æ®æ—¶é—´æˆ³æ£€æµ‹æ˜¯å¦æ˜¯æ–°çš„å›¾åƒåºåˆ—
 void image_callback(const sensor_msgs::ImageConstPtr &image_msg)
 {
     //ROS_INFO("image_callback!");
@@ -110,7 +110,7 @@ void image_callback(const sensor_msgs::ImageConstPtr &image_msg)
     // detect unstable camera stream
     if (last_image_time == -1)
         last_image_time = image_msg->header.stamp.toSec();
-    //ÈôĞÂµ½´ïµÄÍ¼ÏñÊ±¼äÒÑ³¬¹ıÉÏÒ»Ö¡Í¼ÏñÊ±¼ä1s»òĞ¡ÓÚÉÏÒ»Ö¡£¬ÔòÊÇĞÂµÄÍ¼ÏñĞòÁĞ
+    //è‹¥æ–°åˆ°è¾¾çš„å›¾åƒæ—¶é—´å·²è¶…è¿‡ä¸Šä¸€å¸§å›¾åƒæ—¶é—´1sæˆ–å°äºä¸Šä¸€å¸§ï¼Œåˆ™æ˜¯æ–°çš„å›¾åƒåºåˆ—
     else if (image_msg->header.stamp.toSec() - last_image_time > 1.0 || image_msg->header.stamp.toSec() < last_image_time)
     {
         ROS_WARN("image discontinue! detect a new sequence!");
@@ -120,7 +120,7 @@ void image_callback(const sensor_msgs::ImageConstPtr &image_msg)
 }
 
 
-//µØÍ¼µãÔÆ»Øµ÷º¯Êı£¬°Ñpoint_msg·ÅÈëpoint_buf
+//åœ°å›¾ç‚¹äº‘å›è°ƒå‡½æ•°ï¼ŒæŠŠpoint_msgæ”¾å…¥point_buf
 void point_callback(const sensor_msgs::PointCloudConstPtr &point_msg)
 {
     //ROS_INFO("point_callback!");
@@ -141,7 +141,7 @@ void point_callback(const sensor_msgs::PointCloudConstPtr &point_msg)
     */
 }
 
-//Í¼ÏñÖ¡Î»×Ë»Øµ÷º¯Êı£¬°Ñpose_msg·ÅÈëpose_buf
+//å›¾åƒå¸§ä½å§¿å›è°ƒå‡½æ•°ï¼ŒæŠŠpose_msgæ”¾å…¥pose_buf
 void pose_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
 {
     //ROS_INFO("pose_callback!");
@@ -161,7 +161,7 @@ void pose_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
     */
 }
 
-//imuÇ°ÏòµİÍÆµÄ»Øµ÷º¯Êı£¬´ÓIMUÔ¤»ı·ÖµÄÎ»×ËµÃµ½IMUÎ»×ËºÍcamÎ»×Ë£¬µÃµ½µÍÑÓ³ÙºÍ¸ßÆµÂÊ½á¹û
+//imuå‰å‘é€’æ¨çš„å›è°ƒå‡½æ•°ï¼Œä»IMUé¢„ç§¯åˆ†çš„ä½å§¿å¾—åˆ°IMUä½å§¿å’Œcamä½å§¿ï¼Œå¾—åˆ°ä½å»¶è¿Ÿå’Œé«˜é¢‘ç‡ç»“æœ
 void imu_forward_callback(const nav_msgs::Odometry::ConstPtr &forward_msg)
 {
     if (VISUALIZE_IMU_FORWARD)
@@ -191,7 +191,7 @@ void imu_forward_callback(const nav_msgs::Odometry::ConstPtr &forward_msg)
     }
 }
 
-//ÖØ¶¨Î»»Øµ÷º¯Êı£¬½«ÖØ¶¨Î»Ö¡µÄÏà¶ÔÎ»×Ë·ÅÈëloop_info£¬updateKeyFrameLoop()½øĞĞ»Ø»·¸üĞÂ
+//é‡å®šä½å›è°ƒå‡½æ•°ï¼Œå°†é‡å®šä½å¸§çš„ç›¸å¯¹ä½å§¿æ”¾å…¥loop_infoï¼ŒupdateKeyFrameLoop()è¿›è¡Œå›ç¯æ›´æ–°
 void relo_relative_pose_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
 {
     Vector3d relative_t = Vector3d(pose_msg->pose.pose.position.x,
@@ -213,7 +213,7 @@ void relo_relative_pose_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
 
 }
 
-//VIO»Øµ÷º¯Êı£¬¸ù¾İpose_msgÖĞµÄÎ»×ËµÃµ½IMUÎ»×ËºÍcamÎ»×Ë
+//VIOå›è°ƒå‡½æ•°ï¼Œæ ¹æ®pose_msgä¸­çš„ä½å§¿å¾—åˆ°IMUä½å§¿å’Œcamä½å§¿
 void vio_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
 {
     //ROS_INFO("vio_callback!");
@@ -294,7 +294,7 @@ void vio_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
     }
 }
 
-//Ïà»úIMUµÄÍâ²Î»Øµ÷º¯Êı£¬µÃµ½ticºÍqic
+//ç›¸æœºIMUçš„å¤–å‚å›è°ƒå‡½æ•°ï¼Œå¾—åˆ°ticå’Œqic
 void extrinsic_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
 {
     m_process.lock();
@@ -308,7 +308,7 @@ void extrinsic_callback(const nav_msgs::Odometry::ConstPtr &pose_msg)
     m_process.unlock();
 }
 
-//Ö÷Ïß³Ì
+//ä¸»çº¿ç¨‹
 void process()
 {
     if (!LOOP_CLOSURE)
@@ -320,7 +320,7 @@ void process()
         nav_msgs::Odometry::ConstPtr pose_msg = NULL;
 
         // find out the messages with same time stamp
-        //µÃµ½¾ßÓĞÏàÍ¬Ê±¼ä´ÁµÄpose_msg¡¢image_msg¡¢point_msg
+        //å¾—åˆ°å…·æœ‰ç›¸åŒæ—¶é—´æˆ³çš„pose_msgã€image_msgã€point_msg
         m_buf.lock();
         if(!image_buf.empty() && !point_buf.empty() && !pose_buf.empty())
         {
@@ -361,14 +361,14 @@ void process()
             //printf(" image time %f \n", image_msg->header.stamp.toSec());
             
             // skip first few
-            //ÌŞ³ı×î¿ªÊ¼µÄSKIP_FIRST_CNTÖ¡
+            //å‰”é™¤æœ€å¼€å§‹çš„SKIP_FIRST_CNTå¸§
             if (skip_first_cnt < SKIP_FIRST_CNT)
             {
                 skip_first_cnt++;
                 continue;
             }
 
-            //Ã¿¸ôSKIP_CNTÖ¡½øĞĞÒ»´Î  SKIP_CNT=0
+            //æ¯éš”SKIP_CNTå¸§è¿›è¡Œä¸€æ¬¡  SKIP_CNT=0
             if (skip_cnt < SKIP_CNT)
             {
                 skip_cnt++;
@@ -406,7 +406,7 @@ void process()
                                      pose_msg->pose.pose.orientation.y,
                                      pose_msg->pose.pose.orientation.z).toRotationMatrix();
             
-            //½«¾àÉÏÒ»¹Ø¼üÖ¡¾àÀë£¨Æ½ÒÆÏòÁ¿µÄÄ££©³¬¹ıSKIP_DISµÄÍ¼Ïñ´´½¨Îª¹Ø¼üÖ¡
+            //å°†è·ä¸Šä¸€å…³é”®å¸§è·ç¦»ï¼ˆå¹³ç§»å‘é‡çš„æ¨¡ï¼‰è¶…è¿‡SKIP_DISçš„å›¾åƒåˆ›å»ºä¸ºå…³é”®å¸§
             if((T - last_t).norm() > SKIP_DIS)
             {
                 vector<cv::Point3f> point_3d; 
@@ -442,7 +442,7 @@ void process()
 
                 start_flag = 1;
 
-                //ÔÚposegraphÖĞÌí¼Ó¹Ø¼üÖ¡£¬flag_detect_loop=1»Ø»·¼ì²â
+                //åœ¨posegraphä¸­æ·»åŠ å…³é”®å¸§ï¼Œflag_detect_loop=1å›ç¯æ£€æµ‹
                 posegraph.addKeyFrame(keyframe, 1);
                 m_process.unlock();
                 frame_index++;
@@ -450,7 +450,7 @@ void process()
             }
         }
 
-        //ĞİÃß5ms
+        //ä¼‘çœ 5ms
         std::chrono::milliseconds dura(5);
         std::this_thread::sleep_for(dura);
     }
@@ -462,7 +462,7 @@ void command()
         return;
     while(1)
     {
-        //°´s±£´æÎ»×ËÍ¼²¢¹Ø±Õ³ÌĞò
+        //æŒ‰sä¿å­˜ä½å§¿å›¾å¹¶å…³é—­ç¨‹åº
         char c = getchar();
         if (c == 's')
         {
@@ -473,7 +473,7 @@ void command()
             // printf("program shutting down...\n");
             // ros::shutdown();
         }
-        //°´n¿ªÊ¼Ò»¸öĞÂµÄÍ¼ÏñĞòÁĞ
+        //æŒ‰nå¼€å§‹ä¸€ä¸ªæ–°çš„å›¾åƒåºåˆ—
         if (c == 'n')
             new_sequence();
 
@@ -484,12 +484,12 @@ void command()
 
 int main(int argc, char **argv)
 {
-    //ROS³õÊ¼»¯
+    //ROSåˆå§‹åŒ–
     ros::init(argc, argv, "pose_graph");
     ros::NodeHandle n("~");
     posegraph.registerPub(n);
 
-    //¶ÁÈ¡²ÎÊı
+    //è¯»å–å‚æ•°
     n.getParam("visualization_shift_x", VISUALIZATION_SHIFT_X);
     n.getParam("visualization_shift_y", VISUALIZATION_SHIFT_Y);
     n.getParam("skip_cnt", SKIP_CNT);
@@ -508,19 +508,19 @@ int main(int argc, char **argv)
     std::string IMAGE_TOPIC;
     int LOAD_PREVIOUS_POSE_GRAPH;
 
-    //Èç¹ûĞèÒª½øĞĞ»Ø»·
+    //å¦‚æœéœ€è¦è¿›è¡Œå›ç¯
     if (LOOP_CLOSURE)
     {
         ROW = fsSettings["image_height"];
         COL = fsSettings["image_width"];
 
-        //¶ÁÈ¡×Öµä
+        //è¯»å–å­—å…¸
         std::string pkg_path = ros::package::getPath("pose_graph");
         string vocabulary_file = pkg_path + "/../support_files/brief_k10L6.bin";
         cout << "vocabulary_file" << vocabulary_file << endl;
         posegraph.loadVocabulary(vocabulary_file);
 
-        //¶ÁÈ¡BRIEFÃèÊö×ÓµÄÄ£°åÎÄ¼ş
+        //è¯»å–BRIEFæè¿°å­çš„æ¨¡æ¿æ–‡ä»¶
         BRIEF_PATTERN_FILE = pkg_path + "/../support_files/brief_pattern.yml";
         cout << "BRIEF_PATTERN_FILE" << BRIEF_PATTERN_FILE << endl;
         m_camera = camodocal::CameraFactory::instance()->generateCameraFromYamlFile(config_file.c_str());
@@ -542,7 +542,7 @@ int main(int argc, char **argv)
         fout.close();
         fsSettings.release();
 
-        //¼ÓÔØÏÈÇ°µÄÎ»×ËÍ¼
+        //åŠ è½½å…ˆå‰çš„ä½å§¿å›¾
         if (LOAD_PREVIOUS_POSE_GRAPH)
         {
             printf("load pose graph\n");
@@ -561,7 +561,7 @@ int main(int argc, char **argv)
 
     fsSettings.release();
 
-    //¶©ÔÄtopic²¢Ö´ĞĞ¸÷×Ô»Øµ÷º¯Êı
+    //è®¢é˜…topicå¹¶æ‰§è¡Œå„è‡ªå›è°ƒå‡½æ•°
     ros::Subscriber sub_imu_forward = n.subscribe("/vins_estimator/imu_propagate", 2000, imu_forward_callback);
     ros::Subscriber sub_vio = n.subscribe("/vins_estimator/odometry", 2000, vio_callback);
     ros::Subscriber sub_image = n.subscribe(IMAGE_TOPIC, 2000, image_callback);
@@ -570,7 +570,7 @@ int main(int argc, char **argv)
     ros::Subscriber sub_point = n.subscribe("/vins_estimator/keyframe_point", 2000, point_callback);
     ros::Subscriber sub_relo_relative_pose = n.subscribe("/vins_estimator/relo_relative_pose", 2000, relo_relative_pose_callback);
 
-    //·¢²¼µÄtopic
+    //å‘å¸ƒçš„topic
     pub_match_img = n.advertise<sensor_msgs::Image>("match_image", 1000);
     pub_camera_pose_visual = n.advertise<visualization_msgs::MarkerArray>("camera_pose_visual", 1000);
     pub_key_odometrys = n.advertise<visualization_msgs::Marker>("key_odometrys", 1000);
@@ -580,10 +580,10 @@ int main(int argc, char **argv)
     std::thread measurement_process;
     std::thread keyboard_command_process;
 
-    //pose graphÖ÷Ïß³Ì
+    //pose graphä¸»çº¿ç¨‹
     measurement_process = std::thread(process);
 
-    //¼üÅÌ²Ù×÷µÄÏß³Ì
+    //é”®ç›˜æ“ä½œçš„çº¿ç¨‹
     keyboard_command_process = std::thread(command);
 
     ros::spin();

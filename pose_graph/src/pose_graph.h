@@ -34,7 +34,7 @@ using namespace DBoW2;
 
 /**
 * @class PoseGraph
-* @Description ¹¹½¨Î»×ËÍ¼
+* @Description æ„å»ºä½å§¿å›¾
 */
 class PoseGraph
 {
@@ -54,7 +54,7 @@ public:
 	void loadPoseGraph();
 	void publish();
 
-	// vio ----> cur(±Õ»·ºóµÄ)
+	// vio ----> cur(é—­ç¯åçš„)
 	Vector3d t_drift;
 	double yaw_drift;
 	Matrix3d r_drift;
@@ -141,7 +141,7 @@ void YawPitchRollToRotationMatrix(const T yaw, const T pitch, const T roll, T R[
 	R[8] = cos(p) * cos(r);
 };
 
-//¶Ô¾ØÕó½øĞĞ×ªÖÃ
+//å¯¹çŸ©é˜µè¿›è¡Œè½¬ç½®
 template <typename T> 
 void RotationMatrixTranspose(const T R[9], T inv_R[9])
 {

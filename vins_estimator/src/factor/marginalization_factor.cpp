@@ -86,7 +86,7 @@ MarginalizationInfo::~MarginalizationInfo()
     }
 }
 
-//Ìí¼Ó²Ð²î¿éÏà¹ØÐÅÏ¢£¨ÓÅ»¯±äÁ¿£¬´ý±ßÔµ»¯±äÁ¿£©
+//æ·»åŠ æ®‹å·®å—ç›¸å…³ä¿¡æ¯ï¼ˆä¼˜åŒ–å˜é‡ï¼Œå¾…è¾¹ç¼˜åŒ–å˜é‡ï¼‰
 void MarginalizationInfo::addResidualBlockInfo(ResidualBlockInfo *residual_block_info)
 {
     factors.emplace_back(residual_block_info);
@@ -108,7 +108,7 @@ void MarginalizationInfo::addResidualBlockInfo(ResidualBlockInfo *residual_block
     }
 }
 
-//¼ÆËãÃ¿¸ö²Ð²î£¬¶ÔÓ¦µÄJacobian£¬²¢¸üÐÂparameter_block_data
+//è®¡ç®—æ¯ä¸ªæ®‹å·®ï¼Œå¯¹åº”çš„Jacobianï¼Œå¹¶æ›´æ–°parameter_block_data
 void MarginalizationInfo::preMarginalize()
 {
     for (auto it : factors)
@@ -173,7 +173,7 @@ void* ThreadsConstructA(void* threadsstruct)
     return threadsstruct;
 }
 
-//¶àÏß³Ì¹¹ÔìÏÈÑéÏîÊæ¶û²¹AX=bµÄ½á¹¹£¬¼ÆËãJacobianºÍ²Ð²î
+//å¤šçº¿ç¨‹æž„é€ å…ˆéªŒé¡¹èˆ’å°”è¡¥AX=bçš„ç»“æž„ï¼Œè®¡ç®—Jacobianå’Œæ®‹å·®
 void MarginalizationInfo::marginalize()
 {
     int pos = 0;
@@ -275,7 +275,7 @@ void MarginalizationInfo::marginalize()
     Eigen::MatrixXd Amm_inv = saes.eigenvectors() * Eigen::VectorXd((saes.eigenvalues().array() > eps).select(saes.eigenvalues().array().inverse(), 0)).asDiagonal() * saes.eigenvectors().transpose();
     //printf("error1: %f\n", (Amm * Amm_inv - Eigen::MatrixXd::Identity(m, m)).sum());
 
-    //Êæ¶û²¹
+    //èˆ’å°”è¡¥
     Eigen::VectorXd bmm = b.segment(0, m);
     Eigen::MatrixXd Amr = A.block(0, m, m, n);
     Eigen::MatrixXd Arm = A.block(m, 0, n, m);

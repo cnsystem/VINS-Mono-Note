@@ -180,8 +180,8 @@ void ProjectionTdFactor::check(double **parameters)
     double td = parameters[4][0];
 
     Eigen::Vector3d pts_i_td, pts_j_td;
-    //pts_i_td ´¦ÀíÊ±¼äÍ¬²½Îó²îºÍRolling shutterÊ±¼äºó£¬½ÇµãÔÚ¹éÒ»»¯Æ½ÃæµÄ×ø±ê¡£
-    //TR / ROW * row_i¾ÍÊÇÏà»ú rolling µ½ÕâÒ»ĞĞÊ±ËùÓÃµÄÊ±¼ä
+    //pts_i_td å¤„ç†æ—¶é—´åŒæ­¥è¯¯å·®å’ŒRolling shutteræ—¶é—´åï¼Œè§’ç‚¹åœ¨å½’ä¸€åŒ–å¹³é¢çš„åæ ‡ã€‚
+    //TR / ROW * row_iå°±æ˜¯ç›¸æœº rolling åˆ°è¿™ä¸€è¡Œæ—¶æ‰€ç”¨çš„æ—¶é—´
     pts_i_td = pts_i - (td - td_i + TR / ROW * row_i) * velocity_i;
     pts_j_td = pts_j - (td - td_j + TR / ROW * row_j) * velocity_j;
     Eigen::Vector3d pts_camera_i = pts_i_td / inv_dep_i;

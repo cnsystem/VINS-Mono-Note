@@ -11,9 +11,9 @@ using namespace Eigen;
 using namespace std;
 
 /**
-* @class ImageFrame Í¼ÏñÖ¡
-* @Description  Í¼ÏñÖ¡Àà¿ÉÓÉÍ¼ÏñÖ¡µÄÌØÕ÷µãÓëÊ±¼ä´Á¹¹Ôì£¬
-*               ´ËÍâ»¹±£´æÁËÎ»×ËRt£¬Ô¤»ı·Ö¶ÔÏópre_integration£¬ÊÇ·ñÊÇ¹Ø¼üÖ¡¡£
+* @class ImageFrame å›¾åƒå¸§
+* @Description  å›¾åƒå¸§ç±»å¯ç”±å›¾åƒå¸§çš„ç‰¹å¾ç‚¹ä¸æ—¶é—´æˆ³æ„é€ ï¼Œ
+*               æ­¤å¤–è¿˜ä¿å­˜äº†ä½å§¿Rtï¼Œé¢„ç§¯åˆ†å¯¹è±¡pre_integrationï¼Œæ˜¯å¦æ˜¯å…³é”®å¸§ã€‚
 */
 class ImageFrame
 {
