@@ -11,6 +11,7 @@ const int NUM_OF_CAM = 1;//相机的个数
 extern std::string IMAGE_TOPIC;//图像的ROS TOPIC
 extern std::string IMU_TOPIC;//IMU的ROS TOPIC
 extern std::string FISHEYE_MASK;//鱼眼相机mask图的位置
+
 extern std::vector<std::string> CAM_NAMES;//相机参数配置文件名
 extern int MAX_CNT;//特征点最大个数
 extern int MIN_DIST;//特征点之间的最小间隔

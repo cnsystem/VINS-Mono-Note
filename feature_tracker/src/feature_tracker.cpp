@@ -323,7 +323,6 @@ void FeatureTracker::showUndistortion(const string &name)
             m_camera->liftProjective(a, b);
             distortedp.push_back(a);
             undistortedp.push_back(Eigen::Vector2d(b.x() / b.z(), b.y() / b.z()));
-            //printf("%f,%f->%f,%f,%f\n)\n", a.x(), a.y(), b.x(), b.y(), b.z());
         }
     for (int i = 0; i < int(undistortedp.size()); i++)
     {
@@ -331,9 +330,6 @@ void FeatureTracker::showUndistortion(const string &name)
         pp.at<float>(0, 0) = undistortedp[i].x() * FOCAL_LENGTH + COL / 2;
         pp.at<float>(1, 0) = undistortedp[i].y() * FOCAL_LENGTH + ROW / 2;
         pp.at<float>(2, 0) = 1.0;
-        //cout << trackerData[0].K << endl;
-        //printf("%lf %lf\n", p.at<float>(1, 0), p.at<float>(0, 0));
-        //printf("%lf %lf\n", pp.at<float>(1, 0), pp.at<float>(0, 0));
         if (pp.at<float>(1, 0) + 300 >= 0 && pp.at<float>(1, 0) + 300 < ROW + 600 && pp.at<float>(0, 0) + 300 >= 0 && pp.at<float>(0, 0) + 300 < COL + 600)
         {
             undistortedImg.at<uchar>(pp.at<float>(1, 0) + 300, pp.at<float>(0, 0) + 300) = cur_img.at<uchar>(distortedp[i].y(), distortedp[i].x());
@@ -353,7 +349,6 @@ void FeatureTracker::undistortedPoints()
 {
     cur_un_pts.clear();
     cur_un_pts_map.clear();
-    //cv::undistortPoints(cur_pts, un_pts, K, cv::Mat());
 
     for (unsigned int i = 0; i < cur_pts.size(); i++)
     {

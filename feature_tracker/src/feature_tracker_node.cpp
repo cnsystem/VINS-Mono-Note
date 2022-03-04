@@ -21,6 +21,9 @@ ros::Publisher pub_restart;
 //每个相机都有一个FeatureTracker实例，即trackerData[i]
 FeatureTracker trackerData[NUM_OF_CAM];
 
+/// <summary>
+/// 第一帧图像时间戳
+/// </summary>
 double first_image_time;
 int pub_count = 1;
 bool first_image_flag = true;
@@ -193,7 +196,6 @@ void img_callback(const sensor_msgs::ImageConstPtr &img_msg)
         if (SHOW_TRACK)
         {
             ptr = cv_bridge::cvtColor(ptr, sensor_msgs::image_encodings::BGR8);
-            //cv::Mat stereo_img(ROW * NUM_OF_CAM, COL, CV_8UC3);
             cv::Mat stereo_img = ptr->image;
 
             for (int i = 0; i < NUM_OF_CAM; i++)
@@ -205,24 +207,8 @@ void img_callback(const sensor_msgs::ImageConstPtr &img_msg)
                 {
                     double len = std::min(1.0, 1.0 * trackerData[i].track_cnt[j] / WINDOW_SIZE);
                     cv::circle(tmp_img, trackerData[i].cur_pts[j], 2, cv::Scalar(255 * (1 - len), 0, 255 * len), 2);
-                    //draw speed line
-                    /*
-                    Vector2d tmp_cur_un_pts (trackerData[i].cur_un_pts[j].x, trackerData[i].cur_un_pts[j].y);
-                    Vector2d tmp_pts_velocity (trackerData[i].pts_velocity[j].x, trackerData[i].pts_velocity[j].y);
-                    Vector3d tmp_prev_un_pts;
-                    tmp_prev_un_pts.head(2) = tmp_cur_un_pts - 0.10 * tmp_pts_velocity;
-                    tmp_prev_un_pts.z() = 1;
-                    Vector2d tmp_prev_uv;
-                    trackerData[i].m_camera->spaceToPlane(tmp_prev_un_pts, tmp_prev_uv);
-                    cv::line(tmp_img, trackerData[i].cur_pts[j], cv::Point2f(tmp_prev_uv.x(), tmp_prev_uv.y()), cv::Scalar(255 , 0, 0), 1 , 8, 0);
-                    */
-                    //char name[10];
-                    //sprintf(name, "%d", trackerData[i].ids[j]);
-                    //cv::putText(tmp_img, name, trackerData[i].cur_pts[j], cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 0));
                 }
             }
-            //cv::imshow("vis", stereo_img);
-            //cv::waitKey(5);
             pub_match.publish(ptr->toImageMsg());
         }
     }
@@ -264,16 +250,12 @@ int main(int argc, char **argv)
     //订阅话题IMAGE_TOPIC(/cam0/image_raw),执行回调函数img_callback
     ros::Subscriber sub_img = n.subscribe(IMAGE_TOPIC, 100, img_callback);
 
-    //发布feature，实例feature_points，跟踪的特征点，给后端优化用
-    pub_img = n.advertise<sensor_msgs::PointCloud>("feature", 1000);
-    //发布feature_img，实例ptr，跟踪的特征点图，给RVIZ用和调试用
+    //发布feature，实例feature_points，跟踪的特征点，给后端优化用, 在img_callback 被使用
+    pub_img = n.advertise<sensor_msgs::PointCloud>("feature", 1000); 
+    //发布feature_img，实例ptr，跟踪的特征点图，给RVIZ用和调试用, 在img_callback 被使用
     pub_match = n.advertise<sensor_msgs::Image>("feature_img",1000);
     //发布restart
     pub_restart = n.advertise<std_msgs::Bool>("restart",1000);
-    /*
-    if (SHOW_TRACK)
-        cv::namedWindow("vis", cv::WINDOW_NORMAL);
-    */
     ros::spin();
     return 0;
 }
